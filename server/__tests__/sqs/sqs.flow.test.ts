@@ -5,6 +5,7 @@ chai.use(chaiHttp)
 
 
 const sqsUrl = `${process.env.HTTP_PATH}/sqs`
+const sqsMessagesUrl = `${sqsUrl}/messages`
 
 describe('Simple queue service', () => {
 
@@ -113,7 +114,6 @@ describe('Simple queue service', () => {
         })
     })
 
-
     describe('create and delete queue', () => {
         const randomQueueName = Math.random().toString(16).substring(2, 8)
         let response
@@ -207,5 +207,110 @@ describe('Simple queue service', () => {
 
     })
 
+    describe('Create queue and set a message in the queue', () => {
+        const randomQueueName = Math.random().toString(16).substring(2, 8)
+        let response
+        let messageResponse
+        before(async () => {
+            // create queue
+            await chai.request(sqsUrl)
+                .post('/')
+                .send({
+                    queueName: randomQueueName,
+                    region: mainRegion
+                })
+            // search for the queue
+            response = await chai.request(sqsUrl).get('/').query({
+                prefix: randomQueueName,
+                region: mainRegion
+            }).send()
+
+            // push message into queue
+            messageResponse = await chai.request(sqsMessagesUrl)
+                .post('/')
+                .send({
+                    queueName: randomQueueName,
+                    region: mainRegion,
+                    messageBody: 'this is sparta'
+                })
+
+            // delete queue by queue name
+            await chai.request(sqsUrl).delete('/').query({
+                queueName: randomQueueName,
+                region: mainRegion
+            }).send()
+        })
+
+        it('should return 200 status code', () => {
+            assert.strictEqual(response.status, 200)
+        })
+
+        it('should return 200 status code', () => {
+            assert.strictEqual(messageResponse.status, 200)
+        })
+    })
+
+    describe('Create queue, set a message and get message from the queue', () => {
+        const randomQueueName = Math.random().toString(16).substring(2, 8)
+        let response
+        let postMessageResponse
+        let getMessageResponse
+        before(async () => {
+            // create queue
+            await chai.request(sqsUrl)
+                .post('/')
+                .send({
+                    queueName: randomQueueName,
+                    region: mainRegion
+                })
+            // search for the queue
+            response = await chai.request(sqsUrl).get('/').query({
+                prefix: randomQueueName,
+                region: mainRegion
+            }).send()
+
+            // push message into queue
+            postMessageResponse = await chai.request(sqsMessagesUrl)
+                .post('/')
+                .send({
+                    queueName: randomQueueName,
+                    region: mainRegion,
+                    messageBody: 'this is sparta'
+                })
+
+            getMessageResponse = await chai.request(sqsMessagesUrl).get('/').query({
+                queueName: randomQueueName,
+                region: mainRegion,
+                MaxNumberOfMessages: 1
+            }).send()
+
+            // delete queue by queue name
+            await chai.request(sqsUrl).delete('/').query({
+                queueName: randomQueueName,
+                region: mainRegion
+            }).send()
+
+        })
+
+        it('should return 200 status code', () => {
+            assert.strictEqual(response.status, 200)
+        })
+
+        it('should return 200 status code', () => {
+            assert.strictEqual(postMessageResponse.status, 200)
+        })
+
+        it('should return 200 status code', () => {
+            assert.strictEqual(getMessageResponse.status, 200)
+        })
+
+        it('should returns the right response (messages array)', () => {
+            assert.isArray(getMessageResponse.body.Messages)
+        })
+
+        it('should returns the right response (messages array of objects)', () => {
+            assert.isObject(getMessageResponse.body.Messages[0])
+        })
+    })
 
 })

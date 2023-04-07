@@ -40,7 +40,7 @@ const deleteQueue = async (params: { region: string, queueName: string }) => {
 
 
 const getQueueMessages = async (params: { region: string, queueName: string } & AWS.SQS.Types.ReceiveMessageRequest) => {
-    const { region, queueName, ...restParams } = params
+    const { region, queueName, QueueUrl, ...restParams } = params
     const sqsParams = {
         QueueUrl: `http://localhost:4566/000000000000/${params.queueName}`,
         ...restParams

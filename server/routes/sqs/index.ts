@@ -37,6 +37,6 @@ route.delete('/', async (req, res) => {
     }
 })
 
-route.use('/message', sqsMessageRoute)
+route.use('/messages', sqsMessageRoute)
 
 export default route
