@@ -1,0 +1,211 @@
+import chai, { assert } from "chai";
+import chaiHttp from "chai-http";
+
+chai.use(chaiHttp)
+
+
+const sqsUrl = `${process.env.HTTP_PATH}/sqs`
+
+describe('Simple queue service', () => {
+
+
+    const mainRegion = 'us-east-1'
+
+    describe('Create new queue', () => {
+        const randomQueueName = Math.random().toString(16).substring(2, 8)
+        let response
+        before(async () => {
+            response = await chai.request(sqsUrl)
+                .post('/')
+                .send({
+                    queueName: randomQueueName,
+                    region: mainRegion
+                })
+        })
+
+        it ('should return 200 status code', () => {
+            assert.strictEqual(response.status, 200)
+        })
+
+        it ('should the expected response', () => {
+            assert.strictEqual(response.body.response.QueueUrl, `http://localhost:4566/000000000000/${randomQueueName}`)
+        })
+    })
+
+
+    describe('list all queue', () => {
+
+        let response
+        before(async () => {
+            response = await chai.request(sqsUrl).get('/').send()
+        })
+
+        it('should return 200 status code', () => {
+            assert.strictEqual(response.status, 200)
+        })
+
+        it('should return the expected results', () => {
+            assert.isArray(response.body.items)
+        })
+    })
+
+    describe('list all queue with prefix', () => {
+        const randomQueueName = Math.random().toString(16).substring(2, 8)
+        let response
+        before(async () => {
+            // create queue
+            await chai.request(sqsUrl)
+                .post('/')
+                .send({
+                    queueName: randomQueueName,
+                    region: mainRegion
+                })
+            // search for the queue
+            response = await chai.request(sqsUrl).get('/').query({
+                prefix: randomQueueName,
+                region: mainRegion
+            }).send()
+
+        })
+
+        it('should return 200 status code', () => {
+            assert.strictEqual(response.status, 200)
+        })
+
+        it('should return the expected results structure', () => {
+            assert.isArray(response.body.items)
+        })
+
+        it('should return the expected results length', () => {
+            assert.strictEqual(response.body.items.length, 1)
+        })
+    })
+
+    describe('list all queue with prefix and wrong region', () => {
+        const randomQueueName = Math.random().toString(16).substring(2, 8)
+        let response
+        before(async () => {
+            // create queue
+            await chai.request(sqsUrl)
+                .post('/')
+                .send({
+                    queueName: randomQueueName,
+                    region: mainRegion
+                })
+            // search for the queue
+            response = await chai.request(sqsUrl).get('/').query({
+                prefix: randomQueueName,
+                region: 'eu-central-1'
+            }).send()
+
+        })
+
+        it('should return 200 status code', () => {
+            assert.strictEqual(response.status, 200)
+        })
+
+        it('should return the expected results structure', () => {
+            assert.isArray(response.body.items)
+        })
+
+        it('should return the expected results length', () => {
+            assert.strictEqual(response.body.items.length, 0)
+        })
+    })
+
+
+    describe('create and delete queue', () => {
+        const randomQueueName = Math.random().toString(16).substring(2, 8)
+        let response
+        let deleteResponse
+        before(async () => {
+            // create queue
+            await chai.request(sqsUrl)
+                .post('/')
+                .send({
+                    queueName: randomQueueName,
+                    region: mainRegion
+                })
+            // search for the queue
+            response = await chai.request(sqsUrl).get('/').query({
+                prefix: randomQueueName,
+                region: mainRegion
+            }).send()
+
+            // search for the queue
+            deleteResponse = await chai.request(sqsUrl).delete('/').query({
+                queueName: randomQueueName,
+                region: mainRegion
+            }).send()
+
+        })
+
+        it('should return 200 status code', () => {
+            assert.strictEqual(response.status, 200)
+        })
+
+        it('should return the expected results structure', () => {
+            assert.isArray(response.body.items)
+        })
+
+        it('should return the expected results length', () => {
+            assert.strictEqual(response.body.items.length, 1)
+        })
+
+        it('should return 200 status code to delete request', () => {
+            assert.strictEqual(deleteResponse.status, 200)
+        })
+
+    })
+
+    describe('create and try to delete queue on other region', () => {
+        const randomQueueName = Math.random().toString(16).substring(2, 8)
+        let response
+        let deleteResponse
+        before(async () => {
+            // create queue
+            await chai.request(sqsUrl)
+                .post('/')
+                .send({
+                    queueName: randomQueueName,
+                    region: mainRegion
+                })
+            // search for the queue
+            response = await chai.request(sqsUrl).get('/').query({
+                prefix: randomQueueName,
+                region: mainRegion
+            }).send()
+
+            // delete the queue
+            deleteResponse = await chai.request(sqsUrl).delete('/').query({
+                queueName: randomQueueName,
+                region: 'eu-central-1'
+            }).send()
+
+
+        })
+
+        it('should return 200 status code', () => {
+            assert.strictEqual(response.status, 200)
+        })
+
+        it('should return the expected results structure', () => {
+            assert.isArray(response.body.items)
+        })
+
+        it('should return the expected results length', () => {
+            assert.strictEqual(response.body.items.length, 1)
+        })
+
+        it('should return 400 status code to delete request', () => {
+            assert.strictEqual(deleteResponse.status, 400)
+        })
+
+        it('should return error message to delete request with wrong region', () => {
+            assert.strictEqual(deleteResponse.text, '"The specified queue does not exist for this wsdl version."')
+        })
+
+    })
+
+
+})
