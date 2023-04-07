@@ -12,7 +12,7 @@ route.get('/', async (req, res) => {
         prefix: req.query.prefix || ''
     })
     res.send({
-        items: response.QueueUrls ?? []
+        items: response ?? []
     })
 })
 

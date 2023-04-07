@@ -9,7 +9,8 @@ const listQueues = async (params: { region: string, prefix: string }) => {
         endpoint: 'http://localhost:4566',
         region: params.region
     });
-    return sqs.listQueues(sqsParams).promise();
+    const response = await sqs.listQueues(sqsParams).promise();
+    return (response?.QueueUrls || []).map((url: string) => url.replace('http://localhost:4566/000000000000/', ''))
 }
 
 const createQueue = async (params: { region: string, queueName: string, delaySeconds?: number, messageRetentionPeriod?: number }) => {
