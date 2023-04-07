@@ -22,6 +22,11 @@ describe('Simple queue service', () => {
                     queueName: randomQueueName,
                     region: mainRegion
                 })
+
+            await chai.request(sqsUrl).delete('/').query({
+                queueName: randomQueueName,
+                region: mainRegion
+            }).send()
         })
 
         it ('should return 200 status code', () => {
@@ -32,7 +37,6 @@ describe('Simple queue service', () => {
             assert.strictEqual(response.body.response.QueueUrl, `http://localhost:4566/000000000000/${randomQueueName}`)
         })
     })
-
 
     describe('list all queue', () => {
 
@@ -61,9 +65,16 @@ describe('Simple queue service', () => {
                     queueName: randomQueueName,
                     region: mainRegion
                 })
+
             // search for the queue
             response = await chai.request(sqsUrl).get('/').query({
                 prefix: randomQueueName,
+                region: mainRegion
+            }).send()
+
+            // delete queue
+            await chai.request(sqsUrl).delete('/').query({
+                queueName: randomQueueName,
                 region: mainRegion
             }).send()
 
@@ -97,6 +108,12 @@ describe('Simple queue service', () => {
             response = await chai.request(sqsUrl).get('/').query({
                 prefix: randomQueueName,
                 region: 'eu-central-1'
+            }).send()
+
+            // delete queue
+            await chai.request(sqsUrl).delete('/').query({
+                queueName: randomQueueName,
+                region: mainRegion
             }).send()
 
         })
@@ -158,6 +175,38 @@ describe('Simple queue service', () => {
 
     })
 
+    describe('Purge queue', () => {
+        const randomQueueName = Math.random().toString(16).substring(2, 8)
+        let response
+        let creationResponse
+        before(async () => {
+            creationResponse = await chai.request(sqsUrl)
+                .post('/')
+                .send({
+                    queueName: randomQueueName,
+                    region: mainRegion
+                })
+
+            response = await chai.request(sqsUrl)
+                .post('/purge')
+                .send({
+                    queueName: randomQueueName,
+                    region: mainRegion
+                })
+
+            // delete queue
+            await chai.request(sqsUrl).delete('/').query({
+                queueName: randomQueueName,
+                region: mainRegion
+            }).send()
+        })
+
+        it ('should return 200 status code', () => {
+            assert.strictEqual(response.status, 200)
+        })
+
+    })
+
     describe('create and try to delete queue on other region', () => {
         const randomQueueName = Math.random().toString(16).substring(2, 8)
         let response
@@ -180,6 +229,11 @@ describe('Simple queue service', () => {
             deleteResponse = await chai.request(sqsUrl).delete('/').query({
                 queueName: randomQueueName,
                 region: 'eu-central-1'
+            }).send()
+
+            await chai.request(sqsUrl).delete('/').query({
+                queueName: randomQueueName,
+                region: mainRegion
             }).send()
 
 

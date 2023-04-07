@@ -24,6 +24,18 @@ route.post('/', async (req, res) => {
     })
 })
 
+route.post('/purge', async (req, res) => {
+    try {
+        const response = await sqsModule.purgeQueue({
+            region: req.body.region || 'us-east-1',
+            queueName: req.body.queueName
+        })
+        res.send(response)
+    } catch(e) {
+        res.status(400).json(e.message)
+    }
+})
+
 
 route.delete('/', async (req, res) => {
     try {

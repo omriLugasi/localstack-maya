@@ -38,6 +38,18 @@ const deleteQueue = async (params: { region: string, queueName: string }) => {
     return sqs.deleteQueue(sqsParams).promise();
 }
 
+const purgeQueue = async (params: { region: string, queueName: string }) => {
+    const sqsParams = {
+        QueueUrl: `http://localhost:4566/000000000000/${params.queueName}`
+    }
+    const sqs = new AWS.SQS({
+        apiVersion: '2012-11-05',
+        endpoint: 'http://localhost:4566',
+        region: params.region
+    });
+    return sqs.purgeQueue(sqsParams).promise();
+}
+
 
 const getQueueMessages = async (params: { region: string, queueName: string } & AWS.SQS.Types.ReceiveMessageRequest) => {
     const { region, queueName, QueueUrl, ...restParams } = params
@@ -75,4 +87,5 @@ export default {
     deleteQueue,
     getQueueMessages,
     postQueueMessages,
+    purgeQueue,
 }
