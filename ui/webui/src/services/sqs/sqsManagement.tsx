@@ -31,7 +31,7 @@ export const SqsManagement = (props: IProps) => {
     }, [searchValue, props.region])
 
     return (
-        <div>
+        <div className={'flex-center'}>
             <h1> Simple Queue Service</h1>
             <FormControl sx={{ width: '450px' }}>
             <TextField
@@ -47,13 +47,14 @@ export const SqsManagement = (props: IProps) => {
                     setShowCreateNewSqs(true)
                 }}
                 variant="outlined" size={'small'}>Create new Sqs</Button>
-            <CreateNewSqs
-                display={showCreateNewSqs}
-                onClose={() => {
-                    setShowCreateNewSqs(false)
-                }}
-                onCreatedSuccessfully={fetchSqs}
-            />
+            {
+                showCreateNewSqs && <CreateNewSqs
+                  onClose={() => {
+                      setShowCreateNewSqs(false)
+                  }}
+                  onCreatedSuccessfully={fetchSqs}
+                />
+            }
             <Table
                 style={{ width: '800px' }}
                 tbodyStyle={{ height: '300px', width: '800px', overflow: 'auto', display: 'block' }}

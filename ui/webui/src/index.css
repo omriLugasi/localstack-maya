@@ -14,10 +14,16 @@ body {
 }
 
 .navbar {
-  width: 100%;
+  width: inherit;
   height: 60px;
   background: #272767;
   color: white !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  padding-left: 1.5%;
+  padding-right: 1.5%;
 }
 
 
@@ -36,4 +42,10 @@ th {
 td, th {
   border: 1px solid #ddd;
   padding: 8px;
+}
+
+.flex-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

@@ -7,7 +7,6 @@ import {createSqs} from "../../api/sqs";
 
 
 interface IProps {
-    display: boolean,
     onClose: () => void
     onCreatedSuccessfully: () => void
 }
@@ -66,7 +65,7 @@ export const CreateNewSqs = (props: IProps) => {
     }
 
     return (
-        <Dialog open={props.display} onClose={props.onClose} >
+        <Dialog open onClose={props.onClose} >
             <div style={{ width: '400px', display: 'flex', flexDirection: 'column', justifyContent: 'center', margin: '0 20px' }}>
                 <h1> Create new SQS</h1>
                 <TextField

@@ -7,13 +7,20 @@ const route = Route()
 
 
 route.get('/', async (req, res) => {
-    const response = await sqsModule.listQueues({
-        region: req.query.region || 'us-east-1',
-        prefix: req.query.prefix || ''
-    })
-    res.send({
-        items: response ?? []
-    })
+    try {
+        const response = await sqsModule.listQueues({
+            region: req.query.region || 'us-east-1',
+            prefix: req.query.prefix || ''
+        })
+        res.send({
+            items: response ?? []
+        })
+    } catch(e) {
+        console.error(e)
+        res.send({
+            items: []
+        })
+    }
 })
 
 route.post('/', async (req, res) => {
