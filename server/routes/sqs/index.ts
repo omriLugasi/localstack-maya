@@ -17,11 +17,19 @@ route.get('/', async (req, res) => {
 })
 
 route.post('/', async (req, res) => {
-    const { body } = req
-    const response = await sqsModule.createQueue(body)
-    res.send({
-        response: response
-    })
+   try {
+       const { body } = req
+       const response = await sqsModule.createQueue({
+           ...body,
+           region: body.region || 'us-east-1'
+       })
+       res.send({
+           response: response
+       })
+   } catch (e) {
+       console.error(e)
+       res.status(400).json(e)
+   }
 })
 
 route.post('/purge', async (req, res) => {

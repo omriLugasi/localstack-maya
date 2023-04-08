@@ -13,16 +13,17 @@ const listQueues = async (params: { region: string, prefix: string }) => {
     return (response?.QueueUrls || []).map((url: string) => url.replace('http://localhost:4566/000000000000/', ''))
 }
 
-const createQueue = async (params: { region: string, queueName: string, delaySeconds?: number, messageRetentionPeriod?: number }) => {
+const createQueue = async (params: { region: string, queueName: string, attributes: AWS.SQS.Types.CreateQueueRequest['Attributes'], tags: AWS.SQS.Types.CreateQueueRequest['tags'] }) => {
+    const { region, queueName, attributes, tags } = params
     const sqsParams = {
-        QueueName: params.queueName,
-        DelaySeconds: params.delaySeconds,
-        MessageRetentionPeriod: params.messageRetentionPeriod
+        Attributes: attributes,
+        tags,
+        QueueName: queueName,
     }
     const sqs = new AWS.SQS({
         apiVersion: '2012-11-05',
         endpoint: 'http://localhost:4566',
-        region: params.region
+        region: region
     });
     return sqs.createQueue(sqsParams).promise();
 }
