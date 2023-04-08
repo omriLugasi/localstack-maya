@@ -1,5 +1,18 @@
 import AWS from 'aws-sdk'
 
+const getQueueDetailsByName = async (params: { region: string, queueName: string }) => {
+    const sqsParams = {
+        QueueUrl: `http://localhost:4566/000000000000/${params.queueName}`,
+        AttributeNames: ['All']
+    }
+    const sqs = new AWS.SQS({
+        apiVersion: '2012-11-05',
+        endpoint: 'http://localhost:4566',
+        region: params.region
+    });
+    return sqs.getQueueAttributes(sqsParams).promise();
+}
+
 const listQueues = async (params: { region: string, prefix: string }) => {
     const sqsParams = {
         QueueNamePrefix: params.prefix
@@ -90,4 +103,5 @@ export default {
     getQueueMessages,
     postQueueMessages,
     purgeQueue,
+    getQueueDetailsByName,
 }

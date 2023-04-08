@@ -51,7 +51,6 @@ route.post('/purge', async (req, res) => {
     }
 })
 
-
 route.delete('/', async (req, res) => {
     try {
         const response = await sqsModule.deleteQueue({
@@ -65,5 +64,18 @@ route.delete('/', async (req, res) => {
 })
 
 route.use('/messages', sqsMessageRoute)
+
+route.get('/attributes/:queueName', async (req, res) => {
+    try {
+        const response = await sqsModule.getQueueDetailsByName({
+            region: req.query.region || 'us-east-1',
+            queueName: req.params.queueName
+        })
+        res.send(response)
+    } catch(e) {
+        console.error(e)
+        res.sendStatus(400)
+    }
+})
 
 export default route

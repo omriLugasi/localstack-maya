@@ -12,7 +12,7 @@ describe('Simple queue service', () => {
 
     const mainRegion = 'us-east-1'
 
-    describe('Create new queue', () => {
+    describe('create new queue', () => {
         const randomQueueName = Math.random().toString(16).substring(2, 8)
         let response
         before(async () => {
@@ -36,6 +36,58 @@ describe('Simple queue service', () => {
         it ('should the expected response', () => {
             assert.strictEqual(response.body.response.QueueUrl, `http://localhost:4566/000000000000/${randomQueueName}`)
         })
+    })
+
+    describe('get queue details', () => {
+        const randomQueueName = Math.random().toString(16).substring(2, 8)
+        let response
+        let queueAttributesResponse
+        before(async () => {
+            response = await chai.request(sqsUrl)
+                .post('/')
+                .send({
+                    queueName: randomQueueName,
+                    region: mainRegion,
+                    attributes: {
+                        VisibilityTimeout: '12'
+                    }
+                })
+
+            queueAttributesResponse = await chai.request(sqsUrl)
+                .get(`/attributes/${randomQueueName}`)
+                .query({ region: mainRegion })
+                .send()
+
+            await chai.request(sqsUrl).delete('/').query({
+                queueName: randomQueueName,
+                region: mainRegion
+            }).send()
+        })
+
+        it ('should return 200 status code', () => {
+            assert.strictEqual(response.status, 200)
+        })
+
+        it ('should return 200 status code for get queue attributes', () => {
+            assert.strictEqual(queueAttributesResponse.status, 200)
+        })
+
+        it ('should return the expected results for the queue attributes', () => {
+            const { QueueArn, CreatedTimestamp, LastModifiedTimestamp, ...rest} = queueAttributesResponse.body.Attributes
+            assert.deepEqual(rest, {
+                    ApproximateNumberOfMessages: '0',
+                    ApproximateNumberOfMessagesNotVisible: '0',
+                    ApproximateNumberOfMessagesDelayed: '0',
+                    DelaySeconds: '0',
+                    MaximumMessageSize: '262144',
+                    MessageRetentionPeriod: '345600',
+                    ReceiveMessageWaitTimeSeconds: '0',
+                    VisibilityTimeout: '12',
+                    SqsManagedSseEnabled: 'false'
+                }
+            )
+        })
+
     })
 
     describe('list all queue', () => {
