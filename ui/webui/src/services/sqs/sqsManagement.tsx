@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 import {CreateNewSqs} from "./createNewSqs";
 
 interface IProps {
-
+    region?: string
 }
 
 export const SqsManagement = (props: IProps) => {
@@ -28,7 +28,7 @@ export const SqsManagement = (props: IProps) => {
 
     useEffect(() => {
         fetchSqs()
-    }, [searchValue])
+    }, [searchValue, props.region])
 
     return (
         <div>
