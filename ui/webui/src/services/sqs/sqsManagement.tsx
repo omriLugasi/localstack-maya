@@ -1,4 +1,5 @@
 import {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 import {TextField} from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import { getSqses } from './../../api/sqs'
@@ -14,6 +15,7 @@ export const SqsManagement = (props: IProps) => {
     const [searchValue, setSearchValue] = useState<string>('')
     const [showCreateNewSqs, setShowCreateNewSqs] = useState<boolean>(false)
     const [items, setItems] = useState<Record<string, string>[]>([])
+    const navigate = useNavigate()
 
     const fetchSqs = async () => {
         try {
@@ -62,7 +64,10 @@ export const SqsManagement = (props: IProps) => {
                     {
                         key: 'queueName',
                         display: 'Queue Name',
-                        style: { color: 'blue', cursor: 'pointer' }
+                        style: { color: 'blue', cursor: 'pointer' },
+                        hyperLink: (queueName: unknown) => {
+                            navigate(`/SQS/queue/${queueName}`)
+                        }
                     }
                 ]}
                 rows={items}

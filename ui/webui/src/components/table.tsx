@@ -6,6 +6,7 @@ interface IProps {
         key: string,
         display?: string,
         style?: Record<string, string>
+        hyperLink?: (value: unknown) => void
     }[],
     rows: Record<string, string>[]
 }
@@ -30,7 +31,9 @@ export const Table = (props: IProps) => {
                         {
                             props.headers.map(header => (
                                 <td>
-                                    <a style={header.style}> <u>{row[header.key]}</u> </a>
+                                    <p style={header.style} onClick={() => {
+                                        header.hyperLink(row[header.key])
+                                    }}> <u>{row[header.key]}</u> </p>
                                 </td>
                             ))
                         }

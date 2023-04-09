@@ -23,3 +23,12 @@ export const getSqsDetails = async (params: { queueName: string }) => {
     })
     return response.data
 }
+
+export const sqsPushMessage = async (params: { queueName: string, messageBody: unknown }) => {
+    const response = await API.post(`/sqs/messages`, {
+        queueName: params.queueName,
+        messageBody: params.messageBody,
+        region: window.region
+    })
+    return response.data
+}
