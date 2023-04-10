@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {TextField} from "@mui/material";
 import FormControl from "@mui/material/FormControl";
@@ -6,9 +6,9 @@ import { getSqses } from './../../api/sqs'
 import {Table} from "../../components/table";
 import Button from "@mui/material/Button";
 import {CreateNewSqs} from "./createNewSqs";
+import {AppContext} from "../../contexts/application";
 
 interface IProps {
-    region?: string
 }
 
 export const SqsManagement = (props: IProps) => {
@@ -16,10 +16,11 @@ export const SqsManagement = (props: IProps) => {
     const [showCreateNewSqs, setShowCreateNewSqs] = useState<boolean>(false)
     const [items, setItems] = useState<Record<string, string>[]>([])
     const navigate = useNavigate()
+    const appContext = useContext(AppContext)
 
     const fetchSqs = async () => {
         try {
-            const response = await getSqses({ prefix: searchValue })
+            const response = await getSqses({ prefix: searchValue, region: appContext.region })
             setItems(response.items.map((itemName: string) => ({
                 queueName: itemName
             })))
@@ -30,7 +31,7 @@ export const SqsManagement = (props: IProps) => {
 
     useEffect(() => {
         fetchSqs()
-    }, [searchValue, props.region])
+    }, [searchValue, appContext.region])
 
     return (
         <div className={'flex-center'}>

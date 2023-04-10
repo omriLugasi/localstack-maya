@@ -4,7 +4,7 @@ import {Navbar} from "./navbar";
 import {SqsManagement} from "./services/sqs/sqsManagement";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {SqsQueuePage} from "./components/sqsQueuePage";
-import {AppContext} from "./contexts/application";
+import {AppContext, ContextType} from "./contexts/application";
 import Snackbar from "@mui/material/Snackbar";
 import { Alert } from "@mui/material";
 
@@ -29,20 +29,20 @@ const ToasterWrapper = () => {
 }
 
 function App() {
-  const [region, setRegion] = useState<string>('us-east-1')
-  const [state, setState] = useState({
-      toasters: []
+  const [state, setState] = useState<{
+      toasters: ContextType['toasters'],
+      region: ContextType['region']
+  }>({
+      toasters: [],
+      region: 'us-east-1'
   })
-  useEffect(() => {
-      window.region = 'us-east-1'
-  }, [])
 
-   const showToaster =  (params) => {
-       params.id = new Date().getTime()
-       setState({...state, toasters: [...state.toasters, params]})
+   const showToaster =  (params: { type: string, message: string }) => {
+
+       setState({...state, toasters: [...state.toasters, { ...params, id: new Date().getTime()}]})
    }
 
-    const removeToaster =  (id: string) => {
+    const removeToaster =  (id: number) => {
         setState({...state, toasters: state.toasters.filter(toaster => toaster.id !== id)})
     }
 
@@ -58,16 +58,16 @@ function App() {
 
         {
             path: "/sqs",
-            element: <SqsManagement region={region} />,
+            element: <SqsManagement />,
         },
 
         {
             path: "/sqs/queue/:queueName",
-            element: <SqsQueuePage region={region} />,
+            element: <SqsQueuePage />,
         },
         {
             path: "/",
-            element: <SqsManagement region={region} />,
+            element: <SqsManagement />,
         },
     ])
 
@@ -82,8 +82,10 @@ function App() {
             regions={['us-east-1', 'us-east-2', 'us-west-1', 'us-west-2', 'eu-central-1' ]}
             onServiceChange={(selectedValue => {router.navigate(`/${selectedValue}`)})}
             onRegionChange={(selectedValue => {
-                window.region = selectedValue
-                setRegion(selectedValue as string)
+                setState({
+                    ...state,
+                    region: selectedValue as string
+                })
             })}
         />
         <RouterProvider router={router} />

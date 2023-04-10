@@ -4,6 +4,8 @@ import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 import {useFieldNameHook} from "../../customHook/hookName";
 import {createSqs} from "../../api/sqs";
+import {useContext} from "react";
+import {AppContext} from "../../contexts/application";
 
 
 interface IProps {
@@ -13,6 +15,7 @@ interface IProps {
 
 export const CreateNewSqs = (props: IProps) => {
     const [state, initialProps, setState] = useFieldNameHook({})
+    const appContext = useContext(AppContext)
 
     const createSqsHandler = async () => {
         if (!state.queueName) {
@@ -52,7 +55,8 @@ export const CreateNewSqs = (props: IProps) => {
             await createSqs({
                 queueName: state.queueName,
                 attributes: JSON.parse(state.attributes || '{}'),
-                tags: JSON.parse(state.tags || '{}')
+                tags: JSON.parse(state.tags || '{}'),
+                region: appContext.region
             })
             props.onClose()
             props.onCreatedSuccessfully()
