@@ -68,3 +68,9 @@ body {
   flex-direction: column;
   align-items: center;
 }
+
+.flex-space-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

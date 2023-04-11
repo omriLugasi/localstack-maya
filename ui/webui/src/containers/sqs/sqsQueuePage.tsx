@@ -5,6 +5,8 @@ import Button from "@mui/material/Button";
 import {useFieldNameHook} from "../../customHook/hookName";
 import {sqsPushMessage, getSqsDetails, sqsPullMessage} from "../../api/sqs";
 import {AppContext} from "../../contexts/application";
+import {Paper} from "@mui/material";
+import Divider from "@mui/material/Divider";
 
 interface IProps {
 }
@@ -61,17 +63,38 @@ export const SqsQueuePage = (props: IProps) => {
     }
 
     return (
-        <div>
-            <h2> Start working on {queueName}</h2>
+        <div style={{  paddingLeft: 20 }}>
+            <h2> Send and receive messages</h2>
+            <span>Send messages to and receive message from a queue ({queueName}).</span>
 
-            <TextField
-                label="Message"
-                multiline
-                rows={4}
-                { ...initialProps({ fieldName: 'pushMessageContent' }) }
-            />
-            <Button variant="contained" onClick={onPushHandler} size='small'>Push</Button>
-            <Button variant="contained" onClick={onPullHandler} size='small'>Pull message</Button>
+            <Paper style={{ width: '90%' }}>
+                <div className='flex-space-between' style={{  paddingLeft: 20, paddingRight: 20  }}>
+                    <h3>Send message</h3>
+                    <Button
+                        variant="contained"
+                        onClick={onPushHandler}
+                        size='small'
+                        disabled={!state.pushMessageContent?.length}
+                    >Push</Button>
+                </div>
+                <Divider />
+                <p style={{  paddingLeft: 20 }}>
+                    Message body <br/>
+                    <span>Enter the message to send to the queue.</span>
+                </p>
+                <TextField
+                    style={{ width: 400, margin: 20 }}
+                    label="Message"
+                    multiline
+                    rows={6}
+                    { ...initialProps({ fieldName: 'pushMessageContent' }) }
+                />
+            </Paper>
+            <Button
+                variant="contained"
+                onClick={onPullHandler}
+                size='small'
+            >Pull message</Button>
         </div>
     )
 }
