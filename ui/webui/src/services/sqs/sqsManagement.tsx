@@ -20,7 +20,7 @@ interface IProps {
 export const SqsManagement = (props: IProps) => {
     const [searchValue, setSearchValue] = useState<string>('')
     const [showCreateNewSqs, setShowCreateNewSqs] = useState<boolean>(false)
-    const [items, setItems] = useState<Record<string, string>[]>([])
+    const [items, setItems] = useState<{ attributes: Record<string, string>, queueName: string }[]>([])
     const [totalItemCount, setTotalItemCount] = useState<number>(0)
     const navigate = useNavigate()
     const appContext = useContext(AppContext)
