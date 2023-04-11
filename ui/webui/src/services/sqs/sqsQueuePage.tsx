@@ -1,10 +1,10 @@
-import {useParams} from 'react-router-dom'
 import {useContext, useEffect} from "react";
+import {useParams} from 'react-router-dom'
 import TextField from "@mui/material/TextField";
-import {useFieldNameHook} from "../customHook/hookName";
 import Button from "@mui/material/Button";
-import {sqsPushMessage, getSqsDetails, sqsPullMessage} from "../api/sqs";
-import {AppContext} from "../contexts/application";
+import {useFieldNameHook} from "../../customHook/hookName";
+import {sqsPushMessage, getSqsDetails, sqsPullMessage} from "../../api/sqs";
+import {AppContext} from "../../contexts/application";
 
 interface IProps {
 }

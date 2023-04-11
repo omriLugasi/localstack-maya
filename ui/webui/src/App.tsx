@@ -1,12 +1,12 @@
-import {useContext, useEffect, useState} from 'react'
-import './App.css'
+import {useContext, useState} from 'react'
+import Snackbar from "@mui/material/Snackbar";
+import { Alert } from "@mui/material";
 import {Navbar} from "./navbar";
 import {SqsManagement} from "./services/sqs/sqsManagement";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
-import {SqsQueuePage} from "./components/sqsQueuePage";
+import {SqsQueuePage} from "./services/sqs/sqsQueuePage";
 import {AppContext, ContextType} from "./contexts/application";
-import Snackbar from "@mui/material/Snackbar";
-import { Alert } from "@mui/material";
+import './App.css'
 
 
 
