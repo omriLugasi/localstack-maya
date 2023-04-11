@@ -18,7 +18,11 @@ const ToasterWrapper = () => {
             <>
                 {
                     context.toasters.map(item => (
-                        <Snackbar open autoHideDuration={3000} onClose={() => context.removeToaster(item.id)}>
+                        <Snackbar
+                            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                            open
+                            autoHideDuration={4000}
+                            onClose={() => context.removeToaster(item.id)}>
                             <Alert severity={item.type} sx={{ width: '100%' }}>
                                 {item.message}
                             </Alert>
