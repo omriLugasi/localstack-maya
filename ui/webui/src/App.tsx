@@ -2,9 +2,10 @@ import {useContext, useState} from 'react'
 import Snackbar from "@mui/material/Snackbar";
 import { Alert } from "@mui/material";
 import {Navbar} from "./navbar";
-import {SqsManagement} from "./services/sqs/sqsManagement";
+import {SqsManagement} from "./containers/sqs/sqsManagement";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
-import {SqsQueuePage} from "./services/sqs/sqsQueuePage";
+import {SqsQueuePage} from "./containers/sqs/sqsQueuePage";
+import {Home} from "./containers/home";
 import {AppContext, ContextType} from "./contexts/application";
 import './App.css'
 
@@ -66,8 +67,8 @@ function App() {
             element: <SqsQueuePage />,
         },
         {
-            path: "/",
-            element: <SqsManagement />,
+            path: '*',
+            element: <Home />,
         },
     ])
 
@@ -78,15 +79,14 @@ function App() {
         removeToaster
     }}>
         <Navbar
-            services={['SQS', 'S3', 'SNS']}
             regions={['us-east-1', 'us-east-2', 'us-west-1', 'us-west-2', 'eu-central-1' ]}
-            onServiceChange={(selectedValue => {router.navigate(`/${selectedValue}`)})}
             onRegionChange={(selectedValue => {
                 setState({
                     ...state,
                     region: selectedValue as string
                 })
             })}
+            navigateHome={() => router.navigate('/')}
         />
         <RouterProvider router={router} />
         <ToasterWrapper />

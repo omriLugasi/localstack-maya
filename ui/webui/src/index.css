@@ -11,19 +11,56 @@
 }
 body {
   margin: 0;
+  background-color: #f4f3f0;
+}
+
+* {
+  font-family: 'Quicksand', sans-serif !important;
 }
 
 .navbar {
   width: inherit;
   height: 60px;
-  background: #272767;
-  color: white !important;
+  background: #222222;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: white;
   padding-left: 1.5%;
   padding-right: 1.5%;
+}
+
+.navbar-logo-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  gap: 10px;
+  color: white;
+  text-transform: uppercase;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.home {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.home > .services {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 60px;
+  border: dotted 1px;
+  padding: 1%;
+  border-radius: 6px;
+}
+
+.home > .logo {
+  width: 6%;
+  margin-top: 2%;
+  margin-bottom: 2%;
 }
 
 .flex-center {

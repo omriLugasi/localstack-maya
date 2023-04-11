@@ -42,30 +42,31 @@ export const SqsManagement = (props: IProps) => {
 
     return (
         <div className={'flex-center'}>
-            <h1> Simple Queue Service</h1>
-            <FormControl sx={{ width: '450px' }}>
-            <TextField
-                fullWidth
-                label="Search for queue name"
-                variant="standard"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-            />
-            </FormControl>
-            <Button
-                onClick={() => {
-                    setShowCreateNewSqs(true)
-                }}
-                variant="outlined" size={'small'}>Create new Sqs</Button>
-            {
-                showCreateNewSqs && <CreateNewSqs
-                  onClose={() => {
-                      setShowCreateNewSqs(false)
-                  }}
-                  onCreatedSuccessfully={fetchSqs}
-                />
-            }
-            <TableContainer component={Paper} style={{ width: '75%' }}>
+            <div style={{ width: '90%', marginBottom: '2%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column', justifyContent: 'flex-end' }}>
+                    <h1 style={{textTransform: 'uppercase'}}> Simple Queue Service</h1>
+                    <FormControl sx={{ width: '450px' }}>
+                        <TextField
+                            fullWidth
+                            label="Search for queue name"
+                            variant="standard"
+                            value={searchValue}
+                            onChange={(e) => setSearchValue(e.target.value)}
+                        />
+                    </FormControl>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'flex-end' }}>
+                    <Button
+                        onClick={() => {
+                            setShowCreateNewSqs(true)
+                        }}
+                        variant="contained"
+                        size={'small'}>
+                        Create new Sqs
+                    </Button>
+                </div>
+            </div>
+            <TableContainer component={Paper} style={{ width: '92%'}}>
             <Table>
                 <TableHead>
                     <TableRow>
@@ -108,6 +109,14 @@ export const SqsManagement = (props: IProps) => {
             </TableContainer>
             {
                 totalItemCount > 8 ? <p> Display 8 from { totalItemCount } results. </p> : null
+            }
+            {
+                showCreateNewSqs && <CreateNewSqs
+                  onClose={() => {
+                      setShowCreateNewSqs(false)
+                  }}
+                  onCreatedSuccessfully={fetchSqs}
+                />
             }
         </div>
     )

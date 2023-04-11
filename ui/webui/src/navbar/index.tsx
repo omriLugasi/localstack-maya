@@ -1,5 +1,4 @@
-import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
+import React from "react";
 import {FormControl} from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
@@ -7,10 +6,9 @@ import MenuItem from "@mui/material/MenuItem";
 
 
 interface IProps {
-    onServiceChange: (selectedValue: string | null) => void,
     onRegionChange: (selectedValue: string | null) => void,
-    services: string[]
     regions: string[]
+    navigateHome: () => void
 }
 
 export const Navbar = (props: IProps) => {
@@ -18,33 +16,15 @@ export const Navbar = (props: IProps) => {
     return (
         <div className={'navbar'}>
 
-            <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-                <InputLabel id="demo-simple-select-standard-label">AWS Service</InputLabel>
-                <Select
-                    size={'small'}
-                    labelId="demo-simple-select-standard-label"
-                    onChange={(e) => {
-                        props.onServiceChange(e.target.value)
-                    }}
-                    defaultValue={'SQS'}
-                    label="Aws Service"
-                >
-                    {
-                        props.services.map(serviceName => {
-                            return (
-                                <MenuItem
-                                    value={serviceName}
-                                    key={serviceName}
-                                >{ serviceName }</MenuItem>
-                            )
-                        })
-                    }
-                </Select>
-            </FormControl>
+            <div className={'navbar-logo-area'}>
+                <img src={'https://vitejs.dev/logo.svg'} style={{ width: 40 }} onClick={props.navigateHome} />
+                <span onClick={props.navigateHome}> Localstack - Maya</span>
+            </div>
 
-            <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-                <InputLabel id="demo-simple-select-standard-label">Aws Region</InputLabel>
+            <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }} color='secondary'>
+                <InputLabel color='secondary'>Aws Region</InputLabel>
                 <Select
+                    color='secondary'
                     size={'small'}
                     labelId="demo-simple-select-standard-label"
                     onChange={(e) => {
