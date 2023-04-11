@@ -32,7 +32,7 @@ export const Table = (props: IProps) => {
                             props.headers.map(header => (
                                 <td>
                                     <p style={header.style} onClick={() => {
-                                        header.hyperLink(row[header.key])
+                                        header.hyperLink?.(row[header.key])
                                     }}> <u>{row[header.key]}</u> </p>
                                 </td>
                             ))

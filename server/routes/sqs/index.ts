@@ -8,12 +8,25 @@ const route = Route()
 
 route.get('/', async (req, res) => {
     try {
-        const response = await sqsModule.listQueues({
+        const queuesList = await sqsModule.listQueues({
             region: req.query.region || 'us-east-1',
             prefix: req.query.prefix || ''
         })
+        const queues = []
+        if (Array.isArray(queuesList)) {
+            for (const queueName of queuesList) {
+                const response = await sqsModule.getQueueDetailsByName({
+                    region: req.query.region || 'us-east-1',
+                    queueName
+                })
+                queues.push({
+                    queueName,
+                    attributes: response.Attributes
+                })
+            }
+        }
         res.send({
-            items: response ?? []
+            items: queues
         })
     } catch(e) {
         console.error(e)
