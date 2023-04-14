@@ -70,6 +70,7 @@ const getQueueMessages = async (params: { region: string, queueName: string } & 
     const { region, queueName, QueueUrl, ...restParams } = params
     const sqsParams = {
         QueueUrl: `http://localhost:4566/000000000000/${params.queueName}`,
+        AttributeNames: ['All'],
         ...restParams
     }
     const sqs = new AWS.SQS({

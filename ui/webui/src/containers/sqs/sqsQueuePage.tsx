@@ -126,7 +126,7 @@ export const SqsQueuePage = (props: IProps) => {
                     <div className='pull-details-sub-container'>
                         <div>
                             <p>Messages Available</p>
-                            <p>{ (state.queueAttribute?.ApproximateNumberOfMessages  || 0) - (state.queueAttribute?.ApproximateNumberOfMessagesNotVisible || 0)}</p>
+                            <p>{ parseInt(state.queueAttribute?.ApproximateNumberOfMessages  || 0) - parseInt(state.queueAttribute?.ApproximateNumberOfMessagesNotVisible || 0)}</p>
                         </div>
                         <Divider orientation={'vertical'} />
                     </div>
@@ -158,8 +158,8 @@ export const SqsQueuePage = (props: IProps) => {
                         <TableRow>
                             <TableCell>Index</TableCell>
                             <TableCell>ID</TableCell>
-                            <TableCell align="right">ReceiptHandle</TableCell>
-                            <TableCell align="right">Body</TableCell>
+                            <TableCell align="left">Sent</TableCell>
+                            <TableCell align="left">Receive Count</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -169,8 +169,8 @@ export const SqsQueuePage = (props: IProps) => {
                                 <TableCell component="th" scope="row">
                                     {row.MessageId}
                                 </TableCell>
-                                <TableCell align="right">{row.ReceiptHandle.substring(0, 10)}</TableCell>
-                                <TableCell align="right">{row.Body.substring(0, 10)}</TableCell>
+                                <TableCell align="left">{new Date(parseInt(row.Attributes.SentTimestamp)).toISOString()}</TableCell>
+                                <TableCell align="left">{row.Attributes.ApproximateReceiveCount}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
