@@ -74,3 +74,33 @@ body {
   justify-content: space-between;
   align-items: center;
 }
+
+/* sqs queue page */
+
+.pull-details-container {
+  padding-left: 20px;
+  display: flex;
+  gap: 20px;
+  justifyContent: flex-start;
+}
+
+.pull-details-sub-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.sqs-page-paper-container {
+  width: 90%;
+  margin-top: 3%;
+}
+
+.sqs-page-padding-left {
+  padding-left: 20px;
+}
+
+.sqs-page-padding-right {
+  padding-right: 20px;
+}
+/* sqs queue page end */
