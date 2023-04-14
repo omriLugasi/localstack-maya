@@ -14,7 +14,11 @@ interface IProps {
 }
 
 export const CreateNewSqs = (props: IProps) => {
-    const [state, initialProps, setState] = useFieldNameHook({})
+    const [state, initialProps, setState] = useFieldNameHook<{
+        queueName: string,
+        attributes: string,
+        tags: string
+    }>({})
     const appContext = useContext(AppContext)
 
     const createSqsHandler = async () => {
