@@ -419,4 +419,73 @@ describe('Simple queue service', () => {
         })
     })
 
+    describe('Create queue and set a message in the queue and ack', () => {
+        const randomQueueName = Math.random().toString(16).substring(2, 8)
+        let response
+        const messageResponses = []
+        const numberOfMessages = 10
+        let ackMessagesResponse
+        before(async () => {
+            // create queue
+            await chai.request(sqsUrl)
+                .post('/')
+                .send({
+                    queueName: randomQueueName,
+                    region: mainRegion
+                })
+            // search for the queue
+            response = await chai.request(sqsUrl).get('/').query({
+                prefix: randomQueueName,
+                region: mainRegion
+            }).send()
+
+            // push message into queue
+            for (let i = 0; i < numberOfMessages; i++) {
+                messageResponses.push(await chai.request(sqsMessagesUrl)
+                    .post('/')
+                    .send({
+                        queueName: randomQueueName,
+                        region: mainRegion,
+                        messageBody: `this is sparta ${i}`
+                    }))
+            }
+
+            const getMessages = await chai.request(sqsMessagesUrl).get('/').query({
+                queueName: randomQueueName,
+                region: mainRegion,
+                MaxNumberOfMessages: numberOfMessages
+            }).send()
+
+            ackMessagesResponse = await chai.request(sqsMessagesUrl)
+                .post('/ack')
+                .send({
+                    QueueName: randomQueueName,
+                    Region: mainRegion,
+                    Messages: getMessages.body.Messages.map(message => ({ Id: message.MessageId, ReceiptHandle: message.ReceiptHandle }))
+                })
+
+            // delete queue by queue name
+            await chai.request(sqsUrl).delete('/').query({
+                queueName: randomQueueName,
+                region: mainRegion
+            }).send()
+        })
+
+        it('should return 200 status code', () => {
+            assert.strictEqual(response.status, 200)
+        })
+
+
+        it('should return 200 status code', () => {
+            messageResponses.forEach((responseMessage) => {
+                assert.strictEqual(responseMessage.status, 200)
+            })
+        })
+
+        it('should delete all the messages successfully', () => {
+            assert.strictEqual(ackMessagesResponse.body.Successful.length, numberOfMessages)
+        })
+
+    })
+
 })

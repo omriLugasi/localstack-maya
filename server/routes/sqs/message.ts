@@ -32,5 +32,14 @@ route.post('/', async (req, res) => {
     res.send(response)
 })
 
+route.post('/ack', async (req, res) => {
+    const response = await sqsModule.ackQueueMessages({
+        region: req.body.Region || 'us-east-1',
+        queueName: req.body.QueueName,
+        messages: req.body.Messages,
+    })
+    res.send(response)
+})
+
 
 export default route

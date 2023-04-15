@@ -1,15 +1,32 @@
 import AWS from 'aws-sdk'
 
+const createSqsModuleFactory = (() => {
+    const modules: Record<string, AWS.SQS> = {}
+
+    const obtainModule = (region: string) => {
+        if (!modules[region]) {
+            modules[region] = new AWS.SQS({
+                apiVersion: '2012-11-05',
+                endpoint: 'http://localhost:4566',
+                region: region
+            })
+        }
+        return modules[region]
+    }
+
+    return {
+        getByRegion: obtainModule,
+        queueBaseUrl: 'http://localhost:4566/000000000000/'
+    }
+})()
+
+
 const getQueueDetailsByName = async (params: { region: string, queueName: string }) => {
     const sqsParams = {
-        QueueUrl: `http://localhost:4566/000000000000/${params.queueName}`,
+        QueueUrl: `${createSqsModuleFactory.queueBaseUrl}${params.queueName}`,
         AttributeNames: ['All']
     }
-    const sqs = new AWS.SQS({
-        apiVersion: '2012-11-05',
-        endpoint: 'http://localhost:4566',
-        region: params.region
-    });
+    const sqs = createSqsModuleFactory.getByRegion(params.region);
     return sqs.getQueueAttributes(sqsParams).promise();
 }
 
@@ -17,13 +34,9 @@ const listQueues = async (params: { region: string, prefix: string }) => {
     const sqsParams = {
         QueueNamePrefix: params.prefix
     }
-    const sqs = new AWS.SQS({
-        apiVersion: '2012-11-05',
-        endpoint: 'http://localhost:4566',
-        region: params.region
-    });
+    const sqs = createSqsModuleFactory.getByRegion(params.region);
     const response = await sqs.listQueues(sqsParams).promise();
-    return (response?.QueueUrls || []).map((url: string) => url.replace('http://localhost:4566/000000000000/', ''))
+    return (response?.QueueUrls || []).map((url: string) => url.replace(createSqsModuleFactory.queueBaseUrl, ''))
 }
 
 const createQueue = async (params: { region: string, queueName: string, attributes: AWS.SQS.Types.CreateQueueRequest['Attributes'], tags: AWS.SQS.Types.CreateQueueRequest['tags'] }) => {
@@ -33,35 +46,23 @@ const createQueue = async (params: { region: string, queueName: string, attribut
         tags,
         QueueName: queueName,
     }
-    const sqs = new AWS.SQS({
-        apiVersion: '2012-11-05',
-        endpoint: 'http://localhost:4566',
-        region: region
-    });
+    const sqs = createSqsModuleFactory.getByRegion(region);
     return sqs.createQueue(sqsParams).promise();
 }
 
 const deleteQueue = async (params: { region: string, queueName: string }) => {
     const sqsParams = {
-        QueueUrl: `http://localhost:4566/000000000000/${params.queueName}`
+        QueueUrl: `${createSqsModuleFactory.queueBaseUrl}${params.queueName}`
     }
-    const sqs = new AWS.SQS({
-        apiVersion: '2012-11-05',
-        endpoint: 'http://localhost:4566',
-        region: params.region
-    });
+    const sqs = createSqsModuleFactory.getByRegion(params.region);
     return sqs.deleteQueue(sqsParams).promise();
 }
 
 const purgeQueue = async (params: { region: string, queueName: string }) => {
     const sqsParams = {
-        QueueUrl: `http://localhost:4566/000000000000/${params.queueName}`
+        QueueUrl: `${createSqsModuleFactory.queueBaseUrl}${params.queueName}`
     }
-    const sqs = new AWS.SQS({
-        apiVersion: '2012-11-05',
-        endpoint: 'http://localhost:4566',
-        region: params.region
-    });
+    const sqs = createSqsModuleFactory.getByRegion(params.region);
     return sqs.purgeQueue(sqsParams).promise();
 }
 
@@ -69,15 +70,11 @@ const purgeQueue = async (params: { region: string, queueName: string }) => {
 const getQueueMessages = async (params: { region: string, queueName: string } & AWS.SQS.Types.ReceiveMessageRequest) => {
     const { region, queueName, QueueUrl, ...restParams } = params
     const sqsParams = {
-        QueueUrl: `http://localhost:4566/000000000000/${params.queueName}`,
+        QueueUrl: `${createSqsModuleFactory.queueBaseUrl}${params.queueName}`,
         AttributeNames: ['All'],
         ...restParams
     }
-    const sqs = new AWS.SQS({
-        apiVersion: '2012-11-05',
-        endpoint: 'http://localhost:4566',
-        region: params.region
-    });
+    const sqs = createSqsModuleFactory.getByRegion(params.region);
     return sqs.receiveMessage(sqsParams).promise();
 }
 
@@ -85,14 +82,20 @@ const postQueueMessages = async (params: { region: string, queueName: string } &
     const { region, queueName, ...restParams } = params
     const sqsParams = {
         ...restParams,
-        QueueUrl: `http://localhost:4566/000000000000/${params.queueName}`,
+        QueueUrl: `${createSqsModuleFactory.queueBaseUrl}${params.queueName}`,
     }
-    const sqs = new AWS.SQS({
-        apiVersion: '2012-11-05',
-        endpoint: 'http://localhost:4566',
-        region: params.region
-    });
+    const sqs = createSqsModuleFactory.getByRegion(params.region);
     return sqs.sendMessage(sqsParams).promise();
+}
+
+const ackQueueMessages = async (params: { region: string, queueName: string, messages: { Id: string, ReceiptHandle: string}[] }) => {
+    const { region, queueName, messages } = params
+    const sqsParams = {
+        Entries: messages,
+        QueueUrl: `${createSqsModuleFactory.queueBaseUrl}${queueName}`,
+    }
+    const sqs = createSqsModuleFactory.getByRegion(region);
+    return sqs.deleteMessageBatch(sqsParams).promise();
 }
 
 
@@ -105,4 +108,5 @@ export default {
     postQueueMessages,
     purgeQueue,
     getQueueDetailsByName,
+    ackQueueMessages,
 }
