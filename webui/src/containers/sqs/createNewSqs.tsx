@@ -6,6 +6,7 @@ import {useFieldNameHook} from "../../customHook/hookName";
 import {createSqs} from "../../api/sqs";
 import {useContext} from "react";
 import {AppContext} from "../../contexts/application";
+import {AxiosError} from "axios";
 
 
 interface IProps {
@@ -65,7 +66,7 @@ export const CreateNewSqs = (props: IProps) => {
             props.onClose()
             props.onCreatedSuccessfully()
             alert(`${state.queueName} created successfully`)
-        } catch(e: unknown) {
+        } catch(e) {
             console.log(e)
             alert('Oops something went wrong ' + e.response.data.message)
         }

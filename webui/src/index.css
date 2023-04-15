@@ -87,7 +87,7 @@ body {
   padding-left: 20px;
   display: flex;
   gap: 20px;
-  justifyContent: flex-start;
+  justify-content: flex-start;
 }
 
 .pull-details-sub-container {
@@ -95,6 +95,7 @@ body {
   justify-content: space-between;
   align-items: center;
   gap: 20px;
+  width: 25%;
 }
 
 .sqs-page-paper-container {

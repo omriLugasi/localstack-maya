@@ -39,3 +39,12 @@ export const sqsPullMessage = async (params: { region: string, queueName: string
     })
     return response.data
 }
+
+export const sqsAckMessages = async (params: { region: string, queueName: string, messages: { Id: string, ReceiptHandle: string}[] }) => {
+    const response = await API.post(`/sqs/messages/ack`, {
+        Region: params.region,
+        QueueName: params.queueName,
+        Messages: params.messages
+    })
+    return response.data
+}
