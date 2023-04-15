@@ -75,6 +75,9 @@ export const CreateNewSqs = (props: IProps) => {
             <div style={{ width: '400px', display: 'flex', flexDirection: 'column', justifyContent: 'center', margin: '0 20px' }}>
                 <h1> Create new SQS</h1>
                 <TextField
+                    inputProps={{
+                        'data-qa': 'sqs-name-input'
+                    }}
                     label="Sqs Name"
                     variant="standard"
                     value={queueName}
@@ -102,6 +105,7 @@ export const CreateNewSqs = (props: IProps) => {
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, margin: '10px 0' }}>
                     <Button variant="outlined" size={'small'} onClick={props.onClose}>Close</Button>
                     <Button
+                        data-qa='create-sqs-queue'
                         variant="contained"
                         size={'small'}
                         onClick={createSqsHandler}

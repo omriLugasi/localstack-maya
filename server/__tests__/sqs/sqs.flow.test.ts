@@ -19,13 +19,13 @@ describe('Simple queue service', () => {
             response = await chai.request(sqsUrl)
                 .post('/')
                 .send({
-                    queueName: randomQueueName,
-                    region: mainRegion
+                    QueueName: randomQueueName,
+                    Region: mainRegion
                 })
 
             await chai.request(sqsUrl).delete('/').query({
-                queueName: randomQueueName,
-                region: mainRegion
+                QueueName: randomQueueName,
+                Region: mainRegion
             }).send()
         })
 
@@ -34,7 +34,7 @@ describe('Simple queue service', () => {
         })
 
         it ('should the expected response', () => {
-            assert.strictEqual(response.body.response.QueueUrl, `http://localhost:4566/000000000000/${randomQueueName}`)
+            assert.strictEqual(response.body.Response.QueueUrl, `http://localhost:4566/000000000000/${randomQueueName}`)
         })
     })
 
@@ -46,21 +46,21 @@ describe('Simple queue service', () => {
             response = await chai.request(sqsUrl)
                 .post('/')
                 .send({
-                    queueName: randomQueueName,
-                    region: mainRegion,
-                    attributes: {
+                    QueueName: randomQueueName,
+                    Region: mainRegion,
+                    Attributes: {
                         VisibilityTimeout: '12'
                     }
                 })
 
             queueAttributesResponse = await chai.request(sqsUrl)
                 .get(`/attributes/${randomQueueName}`)
-                .query({ region: mainRegion })
+                .query({ Region: mainRegion })
                 .send()
 
             await chai.request(sqsUrl).delete('/').query({
-                queueName: randomQueueName,
-                region: mainRegion
+                QueueName: randomQueueName,
+                Region: mainRegion
             }).send()
         })
 
@@ -102,7 +102,7 @@ describe('Simple queue service', () => {
         })
 
         it('should return the expected results', () => {
-            assert.isArray(response.body.items)
+            assert.isArray(response.body.Items)
         })
     })
 
@@ -114,20 +114,20 @@ describe('Simple queue service', () => {
             await chai.request(sqsUrl)
                 .post('/')
                 .send({
-                    queueName: randomQueueName,
-                    region: mainRegion
+                    QueueName: randomQueueName,
+                    Region: mainRegion
                 })
 
             // search for the queue
             response = await chai.request(sqsUrl).get('/').query({
-                prefix: randomQueueName,
-                region: mainRegion
+                Prefix: randomQueueName,
+                Region: mainRegion
             }).send()
 
             // delete queue
             await chai.request(sqsUrl).delete('/').query({
-                queueName: randomQueueName,
-                region: mainRegion
+                QueueName: randomQueueName,
+                Region: mainRegion
             }).send()
 
         })
@@ -137,11 +137,11 @@ describe('Simple queue service', () => {
         })
 
         it('should return the expected results structure', () => {
-            assert.isArray(response.body.items)
+            assert.isArray(response.body.Items)
         })
 
         it('should return the expected results length', () => {
-            assert.strictEqual(response.body.items.length, 1)
+            assert.strictEqual(response.body.Items.length, 1)
         })
     })
 
@@ -158,14 +158,14 @@ describe('Simple queue service', () => {
                 })
             // search for the queue
             response = await chai.request(sqsUrl).get('/').query({
-                prefix: randomQueueName,
-                region: 'eu-central-1'
+                Prefix: randomQueueName,
+                Region: 'eu-central-1'
             }).send()
 
             // delete queue
             await chai.request(sqsUrl).delete('/').query({
-                queueName: randomQueueName,
-                region: mainRegion
+                QueueName: randomQueueName,
+                Region: mainRegion
             }).send()
 
         })
@@ -175,11 +175,11 @@ describe('Simple queue service', () => {
         })
 
         it('should return the expected results structure', () => {
-            assert.isArray(response.body.items)
+            assert.isArray(response.body.Items)
         })
 
         it('should return the expected results length', () => {
-            assert.strictEqual(response.body.items.length, 0)
+            assert.strictEqual(response.body.Items.length, 0)
         })
     })
 
@@ -192,19 +192,19 @@ describe('Simple queue service', () => {
             await chai.request(sqsUrl)
                 .post('/')
                 .send({
-                    queueName: randomQueueName,
-                    region: mainRegion
+                    QueueName: randomQueueName,
+                    Region: mainRegion
                 })
             // search for the queue
             response = await chai.request(sqsUrl).get('/').query({
-                prefix: randomQueueName,
-                region: mainRegion
+                Prefix: randomQueueName,
+                Region: mainRegion
             }).send()
 
             // search for the queue
             deleteResponse = await chai.request(sqsUrl).delete('/').query({
-                queueName: randomQueueName,
-                region: mainRegion
+                QueueName: randomQueueName,
+                Region: mainRegion
             }).send()
 
         })
@@ -214,11 +214,11 @@ describe('Simple queue service', () => {
         })
 
         it('should return the expected results structure', () => {
-            assert.isArray(response.body.items)
+            assert.isArray(response.body.Items)
         })
 
         it('should return the expected results length', () => {
-            assert.strictEqual(response.body.items.length, 1)
+            assert.strictEqual(response.body.Items.length, 1)
         })
 
         it('should return 200 status code to delete request', () => {
@@ -235,21 +235,21 @@ describe('Simple queue service', () => {
             creationResponse = await chai.request(sqsUrl)
                 .post('/')
                 .send({
-                    queueName: randomQueueName,
-                    region: mainRegion
+                    QueueName: randomQueueName,
+                    Region: mainRegion
                 })
 
             response = await chai.request(sqsUrl)
                 .post('/purge')
                 .send({
-                    queueName: randomQueueName,
-                    region: mainRegion
+                    QueueName: randomQueueName,
+                    Region: mainRegion
                 })
 
             // delete queue
             await chai.request(sqsUrl).delete('/').query({
-                queueName: randomQueueName,
-                region: mainRegion
+                QueueName: randomQueueName,
+                Region: mainRegion
             }).send()
         })
 
@@ -268,24 +268,24 @@ describe('Simple queue service', () => {
             await chai.request(sqsUrl)
                 .post('/')
                 .send({
-                    queueName: randomQueueName,
-                    region: mainRegion
+                    QueueName: randomQueueName,
+                    Region: mainRegion
                 })
             // search for the queue
             response = await chai.request(sqsUrl).get('/').query({
-                prefix: randomQueueName,
-                region: mainRegion
+                Prefix: randomQueueName,
+                Region: mainRegion
             }).send()
 
             // delete the queue
             deleteResponse = await chai.request(sqsUrl).delete('/').query({
-                queueName: randomQueueName,
-                region: 'eu-central-1'
+                QueueName: randomQueueName,
+                Region: 'eu-central-1'
             }).send()
 
             await chai.request(sqsUrl).delete('/').query({
-                queueName: randomQueueName,
-                region: mainRegion
+                QueueName: randomQueueName,
+                Region: mainRegion
             }).send()
 
 
@@ -296,11 +296,11 @@ describe('Simple queue service', () => {
         })
 
         it('should return the expected results structure', () => {
-            assert.isArray(response.body.items)
+            assert.isArray(response.body.Items)
         })
 
         it('should return the expected results length', () => {
-            assert.strictEqual(response.body.items.length, 1)
+            assert.strictEqual(response.body.Items.length, 1)
         })
 
         it('should return 400 status code to delete request', () => {
@@ -322,8 +322,8 @@ describe('Simple queue service', () => {
             await chai.request(sqsUrl)
                 .post('/')
                 .send({
-                    queueName: randomQueueName,
-                    region: mainRegion
+                    QueueName: randomQueueName,
+                    Region: mainRegion
                 })
             // search for the queue
             response = await chai.request(sqsUrl).get('/').query({
@@ -335,15 +335,15 @@ describe('Simple queue service', () => {
             messageResponse = await chai.request(sqsMessagesUrl)
                 .post('/')
                 .send({
-                    queueName: randomQueueName,
-                    region: mainRegion,
-                    messageBody: 'this is sparta'
+                    QueueName: randomQueueName,
+                    Region: mainRegion,
+                    MessageBody: 'this is sparta'
                 })
 
             // delete queue by queue name
             await chai.request(sqsUrl).delete('/').query({
-                queueName: randomQueueName,
-                region: mainRegion
+                QueueName: randomQueueName,
+                Region: mainRegion
             }).send()
         })
 
@@ -366,34 +366,34 @@ describe('Simple queue service', () => {
             await chai.request(sqsUrl)
                 .post('/')
                 .send({
-                    queueName: randomQueueName,
-                    region: mainRegion
+                    QueueName: randomQueueName,
+                    Region: mainRegion
                 })
             // search for the queue
             response = await chai.request(sqsUrl).get('/').query({
-                prefix: randomQueueName,
-                region: mainRegion
+                Prefix: randomQueueName,
+                Region: mainRegion
             }).send()
 
             // push message into queue
             postMessageResponse = await chai.request(sqsMessagesUrl)
                 .post('/')
                 .send({
-                    queueName: randomQueueName,
-                    region: mainRegion,
-                    messageBody: 'this is sparta'
+                    QueueName: randomQueueName,
+                    Region: mainRegion,
+                    MessageBody: 'this is sparta'
                 })
 
             getMessageResponse = await chai.request(sqsMessagesUrl).get('/').query({
-                queueName: randomQueueName,
-                region: mainRegion,
+                QueueName: randomQueueName,
+                Region: mainRegion,
                 MaxNumberOfMessages: 1
             }).send()
 
             // delete queue by queue name
             await chai.request(sqsUrl).delete('/').query({
-                queueName: randomQueueName,
-                region: mainRegion
+                QueueName: randomQueueName,
+                Region: mainRegion
             }).send()
 
         })
@@ -430,8 +430,8 @@ describe('Simple queue service', () => {
             await chai.request(sqsUrl)
                 .post('/')
                 .send({
-                    queueName: randomQueueName,
-                    region: mainRegion
+                    QueueName: randomQueueName,
+                    Region: mainRegion
                 })
             // search for the queue
             response = await chai.request(sqsUrl).get('/').query({
@@ -444,15 +444,15 @@ describe('Simple queue service', () => {
                 messageResponses.push(await chai.request(sqsMessagesUrl)
                     .post('/')
                     .send({
-                        queueName: randomQueueName,
-                        region: mainRegion,
-                        messageBody: `this is sparta ${i}`
+                        QueueName: randomQueueName,
+                        Region: mainRegion,
+                        MessageBody: `this is sparta ${i}`
                     }))
             }
 
             const getMessages = await chai.request(sqsMessagesUrl).get('/').query({
-                queueName: randomQueueName,
-                region: mainRegion,
+                QueueName: randomQueueName,
+                Region: mainRegion,
                 MaxNumberOfMessages: numberOfMessages
             }).send()
 
@@ -466,8 +466,8 @@ describe('Simple queue service', () => {
 
             // delete queue by queue name
             await chai.request(sqsUrl).delete('/').query({
-                queueName: randomQueueName,
-                region: mainRegion
+                QueueName: randomQueueName,
+                Region: mainRegion
             }).send()
         })
 

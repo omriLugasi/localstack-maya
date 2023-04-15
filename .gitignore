@@ -3,3 +3,9 @@ dist/
 node_modules/
 resource/volume/
 .next
+volume/
+videos/
+fixtures/
+screenshots/
+support/
+downloads/

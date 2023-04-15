@@ -32,6 +32,7 @@ export const Home = () => {
                     supportedServices.map(item => {
                         return (
                             <Avatar
+                                data-qa={item.serviceName + '-service'}
                                 key={item.serviceName}
                                 title={item.serviceDescription}
                                 onClick={() => navigate('/' + item.serviceName)}

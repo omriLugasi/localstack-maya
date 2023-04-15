@@ -20,7 +20,7 @@ interface IProps {
 export const SqsManagement = (props: IProps) => {
     const [searchValue, setSearchValue] = useState<string>('')
     const [showCreateNewSqs, setShowCreateNewSqs] = useState<boolean>(false)
-    const [items, setItems] = useState<{ attributes: Record<string, string>, queueName: string }[]>([])
+    const [items, setItems] = useState<{ Attributes: Record<string, string>, QueueName: string }[]>([])
     const [totalItemCount, setTotalItemCount] = useState<number>(0)
     const navigate = useNavigate()
     const appContext = useContext(AppContext)
@@ -28,9 +28,9 @@ export const SqsManagement = (props: IProps) => {
     const fetchSqs = async () => {
         try {
             const response = await getSqses({ prefix: searchValue, region: appContext.region })
-            setTotalItemCount(response.items.length)
-            response.items.length = 8
-            setItems(response.items)
+            setTotalItemCount(response.Items.length)
+            response.Items.length = 8
+            setItems(response.Items)
         } catch (e) {
           console.error(e)
         }
@@ -47,6 +47,9 @@ export const SqsManagement = (props: IProps) => {
                     <h1 style={{textTransform: 'uppercase'}}> Simple Queue Service</h1>
                     <FormControl sx={{ width: '450px' }}>
                         <TextField
+                            inputProps={{
+                                'data-qa': 'search-sqs-queue-by-name'
+                            }}
                             fullWidth
                             label="Search for queue name"
                             variant="standard"
@@ -57,6 +60,7 @@ export const SqsManagement = (props: IProps) => {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'flex-end' }}>
                     <Button
+                        data-qa='button-show-create-sqs-dialog'
                         onClick={() => {
                             setShowCreateNewSqs(true)
                         }}
@@ -80,27 +84,28 @@ export const SqsManagement = (props: IProps) => {
                 <TableBody>
                     {items.map((row) => (
                         <TableRow
-                            key={row.queueName}
+                            key={row.QueueName}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
                             <TableCell component="th" scope="row">
                                 <span
+                                    data-qa={`sqs-queue-column-name-${row.QueueName}`}
                                     style={{ cursor: 'pointer', color: 'blue' }}
-                                    onClick={() => navigate(`/SQS/queue/${row.queueName}`)}>
-                                    {row.queueName}
+                                    onClick={() => navigate(`/SQS/queue/${row.QueueName}`)}>
+                                    {row.QueueName}
                                 </span>
                             </TableCell>
                             <TableCell>
-                                {row.attributes.ApproximateNumberOfMessages}
+                                {row.Attributes.ApproximateNumberOfMessages}
                             </TableCell>
                             <TableCell>
-                                {row.attributes.MaximumMessageSize}
+                                {row.Attributes.MaximumMessageSize}
                             </TableCell>
                             <TableCell>
-                                {row.attributes.VisibilityTimeout}
+                                {row.Attributes.VisibilityTimeout}
                             </TableCell>
                             <TableCell>
-                                {new Date(parseInt(row.attributes.CreatedTimestamp) * 1000).toISOString()}
+                                {new Date(parseInt(row.Attributes.CreatedTimestamp) * 1000).toISOString()}
                             </TableCell>
                         </TableRow>
                     ))}

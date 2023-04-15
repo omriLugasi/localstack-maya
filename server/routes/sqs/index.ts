@@ -9,24 +9,24 @@ const route = Route()
 route.get('/', async (req, res) => {
     try {
         const queuesList = await sqsModule.listQueues({
-            region: req.query.region || 'us-east-1',
-            prefix: req.query.prefix || ''
+            region: req.query.Region || 'us-east-1',
+            prefix: req.query.Prefix || ''
         })
         const queues = []
         if (Array.isArray(queuesList)) {
             for (const queueName of queuesList) {
                 const response = await sqsModule.getQueueDetailsByName({
-                    region: req.query.region || 'us-east-1',
+                    region: req.query.Region || 'us-east-1',
                     queueName
                 })
                 queues.push({
-                    queueName,
-                    attributes: response.Attributes
+                    QueueName: queueName,
+                    Attributes: response.Attributes
                 })
             }
         }
         res.send({
-            items: queues
+            Items: queues
         })
     } catch(e) {
         console.error(e)
@@ -40,11 +40,13 @@ route.post('/', async (req, res) => {
    try {
        const { body } = req
        const response = await sqsModule.createQueue({
-           ...body,
-           region: body.region || 'us-east-1'
+           queueName: body.QueueName,
+           attributes: body.Attributes,
+           tags: body.Tags,
+           region: body.Region || 'us-east-1'
        })
        res.send({
-           response: response
+           Response: response
        })
    } catch (e) {
        console.error(e)
@@ -55,8 +57,8 @@ route.post('/', async (req, res) => {
 route.post('/purge', async (req, res) => {
     try {
         const response = await sqsModule.purgeQueue({
-            region: req.body.region || 'us-east-1',
-            queueName: req.body.queueName
+            region: req.body.Region || 'us-east-1',
+            queueName: req.body.QueueName
         })
         res.send(response)
     } catch(e) {
@@ -67,8 +69,8 @@ route.post('/purge', async (req, res) => {
 route.delete('/', async (req, res) => {
     try {
         const response = await sqsModule.deleteQueue({
-            region: req.query.region || 'us-east-1',
-            queueName: req.query.queueName
+            region: req.query.Region || 'us-east-1',
+            queueName: req.query.QueueName
         })
         res.send(response)
     } catch(e) {
@@ -78,11 +80,11 @@ route.delete('/', async (req, res) => {
 
 route.use('/messages', sqsMessageRoute)
 
-route.get('/attributes/:queueName', async (req, res) => {
+route.get('/attributes/:QueueName', async (req, res) => {
     try {
         const response = await sqsModule.getQueueDetailsByName({
-            region: req.query.region || 'us-east-1',
-            queueName: req.params.queueName
+            region: req.query.Region || 'us-east-1',
+            queueName: req.params.QueueName
         })
         res.send(response)
     } catch(e) {

@@ -146,6 +146,7 @@ export const SqsQueuePage = (props: IProps) => {
                     <div className='flex-space-between sqs-page-padding-right sqs-page-padding-left'>
                         <h3>Send message</h3>
                         <Button
+                            data-qa='sqs-push-message-button'
                             variant="contained"
                             onClick={onPushHandler}
                             size='small'
@@ -158,6 +159,9 @@ export const SqsQueuePage = (props: IProps) => {
                         <span>Enter the message to send to the queue.</span>
                     </p>
                     <TextField
+                        inputProps={{
+                            'data-qa': 'sqs-push-message-input'
+                        }}
                         style={{ width: '80%', margin: 20 }}
                         label="Message"
                         multiline
