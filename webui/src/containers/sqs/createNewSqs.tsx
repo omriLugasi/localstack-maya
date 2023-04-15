@@ -2,11 +2,9 @@ import {Dialog} from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
-import {useFieldNameHook} from "../../customHook/hookName";
 import {createSqs} from "../../api/sqs";
-import {useContext} from "react";
+import {useContext, useState} from "react";
 import {AppContext} from "../../contexts/application";
-import {AxiosError} from "axios";
 
 
 interface IProps {
@@ -15,42 +13,41 @@ interface IProps {
 }
 
 export const CreateNewSqs = (props: IProps) => {
-    const [state, initialProps, setState] = useFieldNameHook<{
-        queueName: string,
-        attributes: string,
-        tags: string
-    }>({})
+    const [queueName, setQueueName] = useState<string>('')
+    const [attributes, setAttributes] = useState<string>('')
+    const [tags, setTags] = useState<string>('')
+
     const appContext = useContext(AppContext)
 
     const createSqsHandler = async () => {
-        if (!state.queueName) {
+        if (!queueName) {
             alert('Sqs name is required')
             return
         }
-        if (state.queueName.includes(' ')) {
+        if (queueName.includes(' ')) {
             alert('Sqs name cannot contains spaces')
             return
         }
-        else if (state.queueName.includes('/')) {
+        else if (queueName.includes('/')) {
             alert('Sqs name cannot contains /')
             return
         }
-        else if (state.queueName.includes('\\')) {
+        else if (queueName.includes('\\')) {
             alert('Sqs name cannot contains \\')
             return
         }
 
-        if (state.attributes) {
+        if (attributes) {
             try {
-                JSON.parse(state.attributes)
+                JSON.parse(attributes)
             } catch (e) {
                 return alert('attributes cannot be parsed into JSON format')
             }
         }
 
-        if (state.tags) {
+        if (tags) {
             try {
-                JSON.parse(state.tags)
+                JSON.parse(tags)
             } catch (e) {
                 return alert('tags cannot be parsed into JSON format')
             }
@@ -58,14 +55,14 @@ export const CreateNewSqs = (props: IProps) => {
 
         try {
             await createSqs({
-                queueName: state.queueName,
-                attributes: JSON.parse(state.attributes || '{}'),
-                tags: JSON.parse(state.tags || '{}'),
+                queueName: queueName,
+                attributes: JSON.parse(attributes || '{}'),
+                tags: JSON.parse(tags || '{}'),
                 region: appContext.region
             })
             props.onClose()
             props.onCreatedSuccessfully()
-            alert(`${state.queueName} created successfully`)
+            alert(`${queueName} created successfully`)
         } catch(e) {
             console.log(e)
             alert('Oops something went wrong ' + e.response.data.message)
@@ -80,21 +77,24 @@ export const CreateNewSqs = (props: IProps) => {
                 <TextField
                     label="Sqs Name"
                     variant="standard"
-                    { ...initialProps({ fieldName: 'queueName' }) }
+                    value={queueName}
+                    onChange={e => setQueueName(e.target.value)}
                 />
                 <br />
                 <TextField
                     label="Attributes (JSON)"
                     multiline
                     rows={4}
-                    { ...initialProps({ fieldName: 'attributes' }) }
+                    value={attributes}
+                    onChange={e => setAttributes(e.target.value)}
                 />
                 <br />
                 <TextField
                     label="tags (JSON)"
                     multiline
                     rows={4}
-                    { ...initialProps({ fieldName: 'tags' }) }
+                    value={tags}
+                    onChange={e => setTags(e.target.value)}
                 />
                 <br />
                 <br />
