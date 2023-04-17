@@ -121,3 +121,27 @@ body {
 }
 /* sqs queue page end */
 
+
+
+.sqs-page-padding-left {
+  padding-left: 20px;
+}
+
+.sqs-page-padding-right {
+  padding-right: 20px;
+}
+
+
+/* s3 bucket page */
+
+
+.s3-page-padding-left {
+  padding-left: 20px;
+}
+
+.s3-page-padding-right {
+  padding-right: 20px;
+}
+
+/* s3 bucket page end */
+

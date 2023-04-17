@@ -9,6 +9,7 @@ import {S3Management} from "./containers/S3/S3Management";
 import {Home} from "./containers/home";
 import {AppContext, ContextType} from "./contexts/application";
 import './App.css'
+import {S3BucketPage} from "./containers/S3/S3BucketPage";
 
 
 
@@ -60,6 +61,10 @@ function App() {
         {
             path: "/s3",
             element: <S3Management />
+        },
+        {
+            path: "/s3/bucket/:bucketName",
+            element: <S3BucketPage />
         },
 
         {
