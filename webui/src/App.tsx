@@ -5,6 +5,7 @@ import {Navbar} from "./navbar";
 import {SqsManagement} from "./containers/sqs/sqsManagement";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {SqsQueuePage} from "./containers/sqs/sqsQueuePage";
+import {S3Management} from "./containers/S3/S3Management";
 import {Home} from "./containers/home";
 import {AppContext, ContextType} from "./contexts/application";
 import './App.css'
@@ -58,7 +59,7 @@ function App() {
         },
         {
             path: "/s3",
-            element: <h1>S3</h1>
+            element: <S3Management />
         },
 
         {

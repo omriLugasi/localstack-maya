@@ -88,6 +88,12 @@ export const SqsQueuePage = (props: IProps) => {
             MaxNumberOfMessages: 10
         })
         setReceivedMessages(response.Messages || [])
+        if (!response.Messages) {
+            appContext.showToaster({
+                type: 'success',
+                message: 'Queue is empty'
+            })
+        }
     }
 
     const closeDrawer = (event: React.KeyboardEvent | React.MouseEvent) => {
