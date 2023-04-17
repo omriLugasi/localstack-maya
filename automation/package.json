@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "cypress:run": "cypress run --spec \"cypress/e2e/sqs.cy.js\""
   },
   "dependencies": {
     "cypress": "^12.9.0"

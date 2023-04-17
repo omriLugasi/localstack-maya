@@ -20,6 +20,16 @@ export const createSqs = async (params: { region: string, queueName: string, att
     return response.data
 }
 
+export const deleteSqs = async (params: { region: string, queueName: string } ) => {
+    const response = await API.delete('/sqs', {
+        params: {
+            Region: params.region,
+            QueueName: params.queueName,
+        }
+    })
+    return response.data
+}
+
 export const getSqsDetails = async (params: { queueName: string, region: string }) => {
     const response = await API.get(`/sqs/attributes/${params.queueName}`, {
         params: { Region: params.region }

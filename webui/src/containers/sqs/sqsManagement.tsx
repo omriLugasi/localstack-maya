@@ -13,21 +13,22 @@ import TableBody from "@mui/material/TableBody";
 import Table from "@mui/material/Table";
 import TableContainer from "@mui/material/TableContainer";
 import Paper from "@mui/material/Paper";
+import useDebounce from "../../customHook/useDebounce";
 
 interface IProps {
 }
 
 export const SqsManagement = (props: IProps) => {
-    const [searchValue, setSearchValue] = useState<string>('')
     const [showCreateNewSqs, setShowCreateNewSqs] = useState<boolean>(false)
     const [items, setItems] = useState<{ Attributes: Record<string, string>, QueueName: string }[]>([])
     const [totalItemCount, setTotalItemCount] = useState<number>(0)
+    const [searchDebounceValue, searchActualValue, setSearchValue] = useDebounce(250)
     const navigate = useNavigate()
     const appContext = useContext(AppContext)
 
     const fetchSqs = async () => {
         try {
-            const response = await getSqses({ prefix: searchValue, region: appContext.region })
+            const response = await getSqses({ prefix: searchActualValue, region: appContext.region })
             setTotalItemCount(response.Items.length)
             response.Items.length = 8
             setItems(response.Items)
@@ -38,7 +39,7 @@ export const SqsManagement = (props: IProps) => {
 
     useEffect(() => {
         fetchSqs()
-    }, [searchValue, appContext.region])
+    }, [searchActualValue, appContext.region])
 
     return (
         <div className={'flex-center'}>
@@ -53,7 +54,7 @@ export const SqsManagement = (props: IProps) => {
                             fullWidth
                             label="Search for queue name"
                             variant="standard"
-                            value={searchValue}
+                            value={searchDebounceValue}
                             onChange={(e) => setSearchValue(e.target.value)}
                         />
                     </FormControl>

@@ -1,8 +1,8 @@
 import {useContext, useEffect, useState} from "react";
-import {useParams} from 'react-router-dom'
+import {useParams, useNavigate} from 'react-router-dom'
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import {sqsPushMessage, getSqsDetails, sqsPullMessage, sqsAckMessages} from "../../api/sqs";
+import {sqsPushMessage, getSqsDetails, sqsPullMessage, sqsAckMessages, deleteSqs} from "../../api/sqs";
 import {AppContext} from "../../contexts/application";
 import {Paper} from "@mui/material";
 import Divider from "@mui/material/Divider";
@@ -41,6 +41,7 @@ export const SqsQueuePage = (props: IProps) => {
         ApproximateNumberOfMessagesNotVisible: '0',
     })
 
+    const navigate = useNavigate();
     const { queueName } = useParams();
     const appContext = useContext(AppContext)
 
@@ -128,6 +129,26 @@ export const SqsQueuePage = (props: IProps) => {
 
     }
 
+    const onDeleteQueue = async() => {
+        try {
+            await deleteSqs({
+                region: appContext.region,
+                queueName: queueName as string
+            })
+            navigate('/SQS')
+            appContext.showToaster({
+                type: 'success',
+                message: `${queueName} deleted successfully`
+            })
+
+        } catch(e) {
+            appContext.showToaster({
+                type: 'error',
+                message: e.response.data.message
+            })
+        }
+    }
+
     const onSelectionChange = (selectedMessage: SqsMessageType) => {
         if (selectedMessages.some((message: SqsMessageType) => message.MessageId === selectedMessage.MessageId)) {
             setSelectedMessages(selectedMessages.filter((message: SqsMessageType) => message.MessageId !== selectedMessage.MessageId))
@@ -140,7 +161,19 @@ export const SqsQueuePage = (props: IProps) => {
         <div>
             <div className='sqs-page-padding-left'>
                 <h2> Send and receive messages</h2>
-                <span>Send messages to and receive message from a queue ({queueName}).</span>
+                <div className='sub-title-bar'>
+                    <span>Send messages to and receive message from a queue ({queueName}).</span>
+                    <div className='sub-title-bar-actions'>
+                        <Button
+                            onClick={onDeleteQueue}
+                            data-qa='sqs-delete-queue'
+                            variant="contained"
+                            size='small'
+                        >Delete Queue</Button>
+                    </div>
+                </div>
+
+
 
                 <Paper className='sqs-page-paper-container'>
                     <div className='flex-space-between sqs-page-padding-right sqs-page-padding-left'>
@@ -176,6 +209,7 @@ export const SqsQueuePage = (props: IProps) => {
                         <h3>Pull messages</h3>
                        <div>
                            <Button
+                               data-qa='sqs-pull-message-button'
                                variant="contained"
                                onClick={onPullHandler}
                                size='small'
@@ -184,6 +218,7 @@ export const SqsQueuePage = (props: IProps) => {
                                selectedMessages.length
                                    ? (
                                        <Button
+                                           data-qa='sqs-ack-message-button'
                                            onClick={ackHandler}
                                            variant="contained"
                                            size='small'
@@ -244,11 +279,15 @@ export const SqsQueuePage = (props: IProps) => {
                                     {receivedMessages.map((row: SqsMessageType, index: number) => (
                                         <TableRow key={row.MessageId}>
                                             <TableCell>
-                                                <Checkbox size='small' onChange={() => onSelectionChange(row)} />
+                                                <Checkbox
+                                                    data-qa={`message-checkbox-${index + 1}`}
+                                                    size='small' onChange={() => onSelectionChange(row)} />
                                             </TableCell>
                                             <TableCell>{index + 1}</TableCell>
                                             <TableCell component="th" scope="row">
-                                                <span className='link' onClick={() => openMessageHandler(row)}>{row.MessageId}</span>
+                                                <span
+                                                    data-qa={`message-link-${index + 1}`}
+                                                    className='link' onClick={() => openMessageHandler(row)}>{row.MessageId}</span>
                                             </TableCell>
                                             <TableCell align="left">{new Date(parseInt(row.Attributes.SentTimestamp)).toISOString()}</TableCell>
                                             <TableCell align="left">{row.Attributes.ApproximateReceiveCount}</TableCell>
@@ -283,7 +322,7 @@ export const SqsQueuePage = (props: IProps) => {
                             <h3>Message id</h3>
                             { openedMessage?.MessageId }
                             <h3>Message body</h3>
-                            { openedMessage.Body }
+                            <span data-qa={`sqs-drawer-message-body`}>{ openedMessage.Body }</span>
                             <h3>Message time</h3>
                             { new Date(parseInt(openedMessage?.Attributes.SentTimestamp)).toISOString() }
                         </div>
