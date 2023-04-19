@@ -1,5 +1,6 @@
 import Route from 'express'
 import s3Module from './../../aws/modules/S3'
+import fileRouter from './files'
 
 const route = Route()
 
@@ -26,6 +27,8 @@ route.post('/', async (req, res) => {
         res.status(400).json(e.message)
     }
 })
+
+route.use('/files', fileRouter)
 
 
 export default route

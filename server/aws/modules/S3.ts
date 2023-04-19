@@ -12,6 +12,11 @@ const listBuckets = async () => {
     return s3.listBuckets().promise()
 }
 
+
+const listObjectsV2 = async (params: AWS.S3.Types.ListObjectsV2Request) => {
+    return s3.listObjectsV2(params).promise()
+}
+
 const createBucket = async (params: { bucketName: string, isVersioned: boolean }) => {
     const response = await s3.createBucket({ Bucket: params.bucketName }).promise()
     if (params.isVersioned) {
@@ -30,5 +35,6 @@ const createBucket = async (params: { bucketName: string, isVersioned: boolean }
 
 export default {
     listBuckets,
-    createBucket
+    createBucket,
+    listObjectsV2
 }
