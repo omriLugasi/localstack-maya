@@ -96,7 +96,7 @@ export const S3Management = (props: IProps) => {
                 </Table>
             </TableContainer>
             {
-                buckets.length > 6 ? <p> Display 6 from { buckets.length } results. </p> : null
+                buckets.length > 7 ? <p> Display 8 from { buckets.length } results. </p> : null
             }
         </div>
     )

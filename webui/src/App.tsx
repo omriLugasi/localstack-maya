@@ -3,14 +3,13 @@ import Snackbar from "@mui/material/Snackbar";
 import { Alert } from "@mui/material";
 import {Navbar} from "./navbar";
 import {SqsManagement} from "./containers/sqs/sqsManagement";
-import {createBrowserRouter, RouterProvider} from "react-router-dom";
+import {createBrowserRouter, RouterProvider, useParams} from "react-router-dom";
 import {SqsQueuePage} from "./containers/sqs/sqsQueuePage";
 import {S3Management} from "./containers/S3/S3Management";
+import {S3BucketPage} from "./containers/S3/S3BucketPage";
 import {Home} from "./containers/home";
 import {AppContext, ContextType} from "./contexts/application";
 import './App.css'
-import {S3BucketPage} from "./containers/S3/S3BucketPage";
-
 
 
 const ToasterWrapper = () => {
@@ -63,10 +62,9 @@ function App() {
             element: <S3Management />
         },
         {
-            path: "/s3/bucket/:bucketName",
+            path: "/s3/bucket/:bucketName/*",
             element: <S3BucketPage />
         },
-
         {
             path: "/sqs",
             element: <SqsManagement />,

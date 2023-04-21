@@ -9,9 +9,10 @@ export const S3GetBuckets = async (params: { search: string }) => {
     return response.data
 }
 
-export const s3GetBucketFiles = async (params: { bucketName: string }): Promise<S3.Types.ListObjectsV2Output> => {
+export const s3GetBucketFiles = async (params: { bucketName: string, prefix: string }): Promise<S3.Types.ListObjectsV2Output> => {
     const requestParams: S3.Types.ListObjectsV2Request = {
         Bucket: params.bucketName,
+        Prefix: params.prefix
     }
     const response = await API.get('/s3/files', { params: requestParams })
     return response.data
