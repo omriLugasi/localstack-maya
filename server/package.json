@@ -12,14 +12,7 @@
   },
   "devDependencies": {
     "@types/aws-sdk": "^2.7.0",
-    "@types/chai": "^4.3.4",
-    "@types/mocha": "^10.0.1",
-    "chai": "^4.3.7",
-    "chai-http": "^4.3.0",
-    "mocha": "^10.2.0",
     "nodemon": "^2.0.22",
-    "sinon": "^15.0.3",
-    "ts-mocha": "^10.0.0",
     "typescript": "^5.0.3"
   },
   "dependencies": {
