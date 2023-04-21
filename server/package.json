@@ -5,9 +5,10 @@
   "types": "index.d.js",
   "license": "MIT",
   "scripts": {
+    "build": "tsc",
     "watch:dev": "tsc --watch",
-    "start:dev": "nodemon dist/index.js",
-    "test": "HTTP_PATH=http://localhost:3232 ts-mocha '__tests__/**/*.test.ts'"
+    "debug": "node --inspect --inspect-brk -r ts-node/register ./index.ts",
+    "start:dev": "nodemon dist/index.js"
   },
   "devDependencies": {
     "@types/aws-sdk": "^2.7.0",
@@ -25,6 +26,8 @@
     "@types/node": "^18.15.11",
     "aws-sdk": "^2.1352.0",
     "cors": "^2.8.5",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "express-fileupload": "^1.4.0",
+    "ts-node": "^10.9.1"
   }
 }

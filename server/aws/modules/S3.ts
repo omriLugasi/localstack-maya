@@ -32,9 +32,14 @@ const createBucket = async (params: { bucketName: string, isVersioned: boolean }
     return response
 }
 
+const uploadFile = async (params: AWS.S3.Types.PutObjectRequest) => {
+    await s3.upload(params).promise();
+}
+
 
 export default {
     listBuckets,
     createBucket,
-    listObjectsV2
+    listObjectsV2,
+    uploadFile
 }
