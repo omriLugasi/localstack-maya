@@ -31,3 +31,8 @@ export const s3UploadFile = async (params: { bucketName: string, file: unknown, 
     })
     return response.data
 }
+
+export const s3DynamicAction = async (data: Record<string, unknown>) => {
+    const response = await API.post('/s3/files/dynamic', data)
+    return response.data
+}

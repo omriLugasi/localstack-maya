@@ -32,4 +32,14 @@ route.post('/', async (req, res) => {
     }
 })
 
+route.post('/dynamic', async (req, res) => {
+    const { S3Method, S3Attribute } = req.body
+    try {
+        const response = await s3Module.getS3()[S3Method](S3Attribute).promise()
+        res.send(response)
+    } catch (e) {
+        res.status(400).json(e.message)
+    }
+})
+
 export default route

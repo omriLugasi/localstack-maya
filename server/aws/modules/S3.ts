@@ -36,10 +36,13 @@ const uploadFile = async (params: AWS.S3.Types.PutObjectRequest) => {
     await s3.upload(params).promise();
 }
 
+const getS3 = () => s3
+
 
 export default {
     listBuckets,
     createBucket,
     listObjectsV2,
-    uploadFile
+    uploadFile,
+    getS3
 }

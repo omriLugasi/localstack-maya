@@ -10,6 +10,7 @@ import {S3BucketPage} from "./containers/S3/S3BucketPage";
 import {Home} from "./containers/home";
 import {AppContext, ContextType} from "./contexts/application";
 import './App.css'
+import {S3FilePage} from "./containers/S3/S3FilePage";
 
 
 const ToasterWrapper = () => {
@@ -64,6 +65,10 @@ function App() {
         {
             path: "/s3/bucket/:bucketName/*",
             element: <S3BucketPage />
+        },
+        {
+            path: "/s3/file/:bucketName/*",
+            element: <S3FilePage />
         },
         {
             path: "/sqs",

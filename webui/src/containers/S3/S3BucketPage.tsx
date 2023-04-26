@@ -27,23 +27,35 @@ export const S3BucketPage = (props: IProps) => {
     const { bucketName } = useParams();
     const navigate = useNavigate();
     const [searchDebounceValue, actualSearchValue, setSearchValue] = useDebounce(300)
-    const folderPath = window.location.pathname.split('?')[0]
+
+    let folderPath = window.location.pathname.split('?')[0]
         .replace(`/S3/bucket/${bucketName}`, '')
+
+    if (folderPath.startsWith('/')) {
+        folderPath = folderPath.substring(1, folderPath.length)
+    }
+
+
+    useEffect(() => {
+        setSearchValue('')
+        setFiles([])
+    }, [folderPath])
 
     useEffect(() => {
         const query = async() => {
             const response = await s3GetBucketFiles({
                 bucketName: bucketName as string,
-                prefix: folderPath ? `${folderPath}/` : '' + actualSearchValue
+                prefix: folderPath + actualSearchValue
             })
             const newFilesObj = (response?.Contents || []).reduce((acc: Record<string, BucketFileType>, current: BucketFileType) => {
-                current.Key = current.Key.replace(folderPath ? `${folderPath}/` : '', '')
+                current.Key = current.Key.replace(folderPath ? `${folderPath}` : '', '')
                 let item = current
                 if (current.Key.includes('/')) {
                     const folderName = current.Key.split('/')[0] + '/'
                     item = {
                         ...current,
-                        Key: folderName
+                        Key: folderName,
+                        Folder: true
                     }
                 }
                 acc[item.Key] = item
@@ -52,7 +64,7 @@ export const S3BucketPage = (props: IProps) => {
             setFiles(Object.values(newFilesObj))
         }
         query()
-    }, [actualSearchValue])
+    }, [actualSearchValue, folderPath])
 
     return (
         <div className='s3-page-padding-left'>
@@ -104,7 +116,13 @@ export const S3BucketPage = (props: IProps) => {
                                 <span
                                     data-qa={`s3-file-column-name-${row.Key}`}
                                     className='link'
-                                    onClick={() => navigate(`/S3/bucket/${bucketName}/${row.Key}`)}>
+                                    onClick={() => {
+                                        if (row.Folder) {
+                                            navigate(`/S3/bucket/${bucketName}/${folderPath}${row.Key}`)
+                                        } else {
+                                            navigate(`/S3/file/${bucketName}/${folderPath}${row.Key}`)
+                                        }
+                                    }}>
                                     {row.Key}
                                 </span>
                             </TableCell>
