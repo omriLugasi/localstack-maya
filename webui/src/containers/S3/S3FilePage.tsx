@@ -1,6 +1,6 @@
 import {useParams} from "react-router-dom";
 import {useEffect} from "react";
-import {s3DynamicAction} from "../../api/S3";
+import {s3, s3DynamicAction} from "../../api/S3";
 
 interface IProps {
 }
@@ -16,13 +16,21 @@ export const S3FilePage = (props: IProps) => {
     }
 
     useEffect(() => {
-        s3DynamicAction({
-            S3Method: 'listObjectVersions',
-            S3Attribute: {
-                Bucket: bucketName,
+        const query = async () => {
+            s3.listObjectVersions({
+                Bucket: bucketName as string,
                 Prefix: filePath
-            }
-        }).then(console.log)
+            }).promise().then(console.log)
+        }
+
+        query()
+        // s3DynamicAction({
+        //     S3Method: 'listObjectVersions',
+        //     S3Attribute: {
+        //         Bucket: bucketName,
+        //         Prefix: filePath
+        //     }
+        // }).then(console.log)
     }, [])
 
     return(

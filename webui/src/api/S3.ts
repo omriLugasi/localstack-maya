@@ -2,6 +2,14 @@ import type { S3 } from 'aws-sdk'
 import API from './index'
 
 
+export const s3 = new window.AWS.S3({
+    region: 'us-east-1',
+    apiVersion: '2006-03-01',
+    endpoint: 'http://localhost:3232/dynamic',
+    s3ForcePathStyle: true
+})
+
+
 export const S3GetBuckets = async (params: { search: string }) => {
     const response = await API.get('/s3', { params: {
             Search: params.search
@@ -33,6 +41,16 @@ export const s3UploadFile = async (params: { bucketName: string, file: unknown, 
 }
 
 export const s3DynamicAction = async (data: Record<string, unknown>) => {
+
     const response = await API.post('/s3/files/dynamic', data)
     return response.data
+}
+
+export const createBucket = async (params: {IsVersioned: boolean, createBucketParams: S3.Types.CreateBucketRequest, versioningParams?: S3.Types.PutBucketVersioningRequest}) => {
+    const { IsVersioned, createBucketParams, versioningParams } = params
+    const response = await s3.createBucket(createBucketParams).promise()
+    if (IsVersioned && versioningParams) {
+        await s3.putBucketVersioning(versioningParams).promise()
+    }
+    return response
 }

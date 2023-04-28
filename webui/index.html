@@ -2,6 +2,17 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script src="./aws-sdk-2.1366.0.min.js"></script>
+    <script>
+      AWS.config.region = 'us-east-1';
+      AWS.config.update({
+        maxRetries: 3,
+        httpOptions: {timeout: 30000, connectTimeout: 5000},
+        region: 'us-east-1',
+        accessKeyId: 'XXXX...',
+        secretAccessKey: 'XXXX...',
+      })
+    </script>
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com">

@@ -27,7 +27,7 @@ const createBucket = async (params: { bucketName: string, isVersioned: boolean }
                 Status: "Enabled"
             }
         };
-        await s3.putBucketVersioning(versionedParams).promise();
+       console.log(await s3.putBucketVersioning(versionedParams).promise())
     }
     return response
 }

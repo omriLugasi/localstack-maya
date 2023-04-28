@@ -10,7 +10,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
-import {S3GetBuckets} from "../../api/S3";
+import {createBucket, S3GetBuckets} from "../../api/S3";
 import Button from "@mui/material/Button";
 
 type BucketType = { Name: string, CreationDate: string }
@@ -45,6 +45,23 @@ export const S3Management = (props: IProps) => {
                         data-qa='s3-create-queue'
                         variant="contained"
                         size='small'
+                        onClick={() => createBucket({
+                            IsVersioned: true,
+                            versioningParams: {
+                                Bucket: 'xyz2',
+                                VersioningConfiguration: {
+                                    MFADelete: "Disabled",
+                                    Status: "Enabled"
+                                },
+                                CreateBucketConfiguration: {
+                                    LocationConstraint: 'us-east-1'
+                                }
+                            },
+                            createBucketParams: {
+                                Bucket: 'xyz2',
+                            }
+                        })}
+
                     >Create bucket</Button>
                 </div>
             </div>
