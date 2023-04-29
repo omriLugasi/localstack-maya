@@ -24,13 +24,6 @@ export const S3FilePage = (props: IProps) => {
         }
 
         query()
-        // s3DynamicAction({
-        //     S3Method: 'listObjectVersions',
-        //     S3Attribute: {
-        //         Bucket: bucketName,
-        //         Prefix: filePath
-        //     }
-        // }).then(console.log)
     }, [])
 
     return(

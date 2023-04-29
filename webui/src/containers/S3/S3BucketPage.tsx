@@ -41,28 +41,29 @@ export const S3BucketPage = (props: IProps) => {
         setFiles([])
     }, [folderPath])
 
-    useEffect(() => {
-        const query = async() => {
-            const response = await s3GetBucketFiles({
-                Bucket: bucketName as string,
-                Prefix: folderPath + actualSearchValue
-            })
-            const newFilesObj = (response?.Contents || []).reduce((acc: Record<string, BucketFileType>, current: BucketFileType) => {
-                current.Key = current.Key.replace(folderPath ? `${folderPath}` : '', '')
-                let item = current
-                if (current.Key.includes('/')) {
-                    const folderName = current.Key.split('/')[0] + '/'
-                    item = {
-                        ...current,
-                        Key: folderName,
-                        Folder: true
-                    }
+    const query = async() => {
+        const response = await s3GetBucketFiles({
+            Bucket: bucketName as string,
+            Prefix: folderPath + actualSearchValue
+        })
+        const newFilesObj = (response?.Contents || []).reduce((acc: Record<string, BucketFileType>, current: BucketFileType) => {
+            current.Key = current.Key.replace(folderPath ? `${folderPath}` : '', '')
+            let item = current
+            if (current.Key.includes('/')) {
+                const folderName = current.Key.split('/')[0] + '/'
+                item = {
+                    ...current,
+                    Key: folderName,
+                    Folder: true
                 }
-                acc[item.Key] = item
-                return acc
-            }, {})
-            setFiles(Object.values(newFilesObj))
-        }
+            }
+            acc[item.Key] = item
+            return acc
+        }, {})
+        setFiles(Object.values(newFilesObj))
+    }
+
+    useEffect(() => {
         query()
     }, [actualSearchValue, folderPath])
 
@@ -140,6 +141,7 @@ export const S3BucketPage = (props: IProps) => {
                 ? <UploadFile
                         bucketName={bucketName as string}
                         prePath={''}
+                        onNewItemCreated={query}
                         onClose={() => setShowUploadFileDialog(false)} />
                 : null
             }

@@ -13,12 +13,14 @@ import TableBody from "@mui/material/TableBody";
 import {createBucket, S3GetBuckets} from "../../api/S3";
 import Button from "@mui/material/Button";
 import type {Bucket} from 'aws-sdk/clients/s3'
+import {CreateBucketDialog} from "./CreateBucket";
 
 interface IProps {}
 
 export const S3Management = (props: IProps) => {
     const [searchDebounceValue, searchActualValue, setSearchValue] = useDebounce(250)
     const [ buckets, setBuckets ] = useState<Bucket[]>([])
+    const [ createBucketDialog, setCreateBucketDialog ] = useState<boolean>(false)
     const navigate = useNavigate()
 
     const searchForBuckets = async () => {
@@ -44,25 +46,9 @@ export const S3Management = (props: IProps) => {
                         data-qa='s3-create-queue'
                         variant="contained"
                         size='small'
-                        onClick={() => createBucket({
-                            IsVersioned: true,
-                            versioningParams: {
-                                Bucket: 'xyz3',
-                                VersioningConfiguration: {
-                                    MFADelete: "Disabled",
-                                    Status: "Enabled"
-                                },
-                                // CreateBucketConfiguration: {
-                                //     LocationConstraint: 'us-east-1'
-                                // }
-                            },
-                            createBucketParams: {
-                                Bucket: 'xyz3',
-                             // CreateBucketConfiguration: {
-                             //     LocationConstraint: 'us-east-1'
-                             // }
-                            }
-                        })}
+                        onClick={() => {
+                            setCreateBucketDialog(true)
+                        }}
 
                     >Create bucket</Button>
                 </div>
@@ -116,6 +102,9 @@ export const S3Management = (props: IProps) => {
             </TableContainer>
             {
                 buckets.length > 7 ? <p> Display 8 from { buckets.length } results. </p> : null
+            }
+            {
+                createBucketDialog && <CreateBucketDialog onClose={() => setCreateBucketDialog(false)} />
             }
         </div>
     )

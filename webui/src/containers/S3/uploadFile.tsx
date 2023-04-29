@@ -9,6 +9,7 @@ import {AppContext} from "../../contexts/application";
 
 interface IProps {
     onClose: () => void
+    onNewItemCreated: () => void
     bucketName: string
     prePath: string
 }
@@ -30,6 +31,7 @@ export const UploadFile = (props: IProps) => {
                 type: 'success',
                 message: `${filePath} successfully created`
             })
+            props.onNewItemCreated()
         } catch(e) {
             console.error(e)
             appContext.showToaster({

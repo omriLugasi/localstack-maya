@@ -64,8 +64,8 @@ app.use('/dynamic/*', async (req, res) => {
         })
         res.send(response.data)
     } catch (e) {
-        console.log(e)
-        res.status(400).json(e)
+        console.log(e.response)
+        res.status(e.response.status).json(e)
     }
 })
 
