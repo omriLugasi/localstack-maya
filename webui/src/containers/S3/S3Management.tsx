@@ -12,20 +12,19 @@ import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import {createBucket, S3GetBuckets} from "../../api/S3";
 import Button from "@mui/material/Button";
-
-type BucketType = { Name: string, CreationDate: string }
+import type {Bucket} from 'aws-sdk/clients/s3'
 
 interface IProps {}
 
 export const S3Management = (props: IProps) => {
     const [searchDebounceValue, searchActualValue, setSearchValue] = useDebounce(250)
-    const [ buckets, setBuckets ] = useState<BucketType[]>([])
+    const [ buckets, setBuckets ] = useState<Bucket[]>([])
     const navigate = useNavigate()
 
     const searchForBuckets = async () => {
         try {
             const response = await S3GetBuckets({ search: searchActualValue })
-            setBuckets(response.Items.filter((bucket: BucketType) => bucket.Name.includes(searchActualValue)))
+            setBuckets(response.Items.filter((bucket: Bucket) => bucket.Name?.includes(searchActualValue)))
         } catch (e) {
             console.error(e)
         }
@@ -48,17 +47,20 @@ export const S3Management = (props: IProps) => {
                         onClick={() => createBucket({
                             IsVersioned: true,
                             versioningParams: {
-                                Bucket: 'xyz2',
+                                Bucket: 'xyz3',
                                 VersioningConfiguration: {
                                     MFADelete: "Disabled",
                                     Status: "Enabled"
                                 },
-                                CreateBucketConfiguration: {
-                                    LocationConstraint: 'us-east-1'
-                                }
+                                // CreateBucketConfiguration: {
+                                //     LocationConstraint: 'us-east-1'
+                                // }
                             },
                             createBucketParams: {
-                                Bucket: 'xyz2',
+                                Bucket: 'xyz3',
+                             // CreateBucketConfiguration: {
+                             //     LocationConstraint: 'us-east-1'
+                             // }
                             }
                         })}
 
@@ -88,7 +90,7 @@ export const S3Management = (props: IProps) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {buckets.map((bucket: BucketType, index: number) => index > 7 ? null : (
+                        {buckets.map((bucket: Bucket, index: number) => index > 7 ? null : (
                             <TableRow
                                 key={bucket.Name}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -102,7 +104,7 @@ export const S3Management = (props: IProps) => {
                                 </span>
                                 </TableCell>
                                 <TableCell>
-                                    {bucket.CreationDate}
+                                    {bucket.CreationDate.toISOString()}
                                 </TableCell>
                                 <TableCell>
                                     No

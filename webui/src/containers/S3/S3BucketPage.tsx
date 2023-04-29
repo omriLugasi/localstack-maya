@@ -44,8 +44,8 @@ export const S3BucketPage = (props: IProps) => {
     useEffect(() => {
         const query = async() => {
             const response = await s3GetBucketFiles({
-                bucketName: bucketName as string,
-                prefix: folderPath + actualSearchValue
+                Bucket: bucketName as string,
+                Prefix: folderPath + actualSearchValue
             })
             const newFilesObj = (response?.Contents || []).reduce((acc: Record<string, BucketFileType>, current: BucketFileType) => {
                 current.Key = current.Key.replace(folderPath ? `${folderPath}` : '', '')

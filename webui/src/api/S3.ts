@@ -1,49 +1,36 @@
 import type { S3 } from 'aws-sdk'
-import API from './index'
+import type {Bucket} from 'aws-sdk/clients/s3'
+import {ManagedUpload} from "aws-sdk/lib/s3/managed_upload";
 
 
 export const s3 = new window.AWS.S3({
-    region: 'us-east-1',
+    region: 'us-west-2',
     apiVersion: '2006-03-01',
     endpoint: 'http://localhost:3232/dynamic',
     s3ForcePathStyle: true
 })
 
 
-export const S3GetBuckets = async (params: { search: string }) => {
-    const response = await API.get('/s3', { params: {
-            Search: params.search
-        } })
-    return response.data
+export const S3GetBuckets = async (params: { search: string }): Promise<{ Items: Bucket[] }> => {
+    const { Buckets } = await s3.listBuckets().promise()
+    return { Items: (Buckets || []) }
 }
 
-export const s3GetBucketFiles = async (params: { bucketName: string, prefix: string }): Promise<S3.Types.ListObjectsV2Output> => {
-    const requestParams: S3.Types.ListObjectsV2Request = {
+export const s3GetBucketFiles = async (params: S3.Types.ListObjectsV2Request): Promise<S3.Types.ListObjectsV2Output> => {
+    const response = await s3.listObjectsV2(params).promise()
+    return response
+}
+
+export const s3UploadFile = async (params: { bucketName: string, file: unknown, path: string }): Promise<S3.Types.ManagedUpload.SendData> => {
+    const xPramas = {
         Bucket: params.bucketName,
-        Prefix: params.prefix
+        Body: params.file as Blob,
+        Key: params.path,
+        ContentType: params.file.mimeType,
+        ContentLength: params.file.size
     }
-    const response = await API.get('/s3/files', { params: requestParams })
-    return response.data
-}
 
-export const s3UploadFile = async (params: { bucketName: string, file: unknown, path: string }): Promise<S3.Types.ListObjectsV2Output> => {
-    const formData = new FormData();
-
-    formData.append("BucketName", params.bucketName)
-    formData.append("File", params.file as Blob)
-    formData.append("Path", params.path)
-    const response = await API.post('/s3/files', formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-    })
-    return response.data
-}
-
-export const s3DynamicAction = async (data: Record<string, unknown>) => {
-
-    const response = await API.post('/s3/files/dynamic', data)
-    return response.data
+    return s3.upload(xPramas).promise();
 }
 
 export const createBucket = async (params: {IsVersioned: boolean, createBucketParams: S3.Types.CreateBucketRequest, versioningParams?: S3.Types.PutBucketVersioningRequest}) => {

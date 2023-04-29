@@ -1,6 +1,6 @@
 import {useParams} from "react-router-dom";
 import {useEffect} from "react";
-import {s3, s3DynamicAction} from "../../api/S3";
+import {s3} from "../../api/S3";
 
 interface IProps {
 }
