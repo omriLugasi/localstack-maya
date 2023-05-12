@@ -1,6 +1,6 @@
 import {useParams} from "react-router-dom";
 import {useEffect} from "react";
-import {s3} from "../../api/S3";
+import {listObjectVersions} from "../../api/S3";
 
 interface IProps {
 }
@@ -17,10 +17,10 @@ export const S3FilePage = (props: IProps) => {
 
     useEffect(() => {
         const query = async () => {
-            s3.listObjectVersions({
+            listObjectVersions({
                 Bucket: bucketName as string,
                 Prefix: filePath
-            }).promise().then(console.log)
+            }).then(console.log)
         }
 
         query()

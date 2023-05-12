@@ -94,14 +94,6 @@ export const sqsPushMessage = async (params: { region: string, queueName: string
 }
 
 export const sqsPullMessage = async (params: { region: string, queueName: string, [key: string]: string | number }) => {
-    // const response = await API.get(`/sqs/messages`, {
-    //     params: {
-    //         QueueName: params.queueName,
-    //         Region: params.region,
-    //         ...params,
-    //     }
-    // })
-    // return response.data
     const {region, queueName, ...rest} = params
     const sqs = new window.AWS.SQS({
         apiVersion,

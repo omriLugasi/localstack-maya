@@ -21,7 +21,7 @@ export const s3GetBucketFiles = async (params: S3.Types.ListObjectsV2Request): P
 }
 
 export const s3UploadFile = async (params: { bucketName: string, file: unknown, path: string }): Promise<S3.Types.ManagedUpload.SendData> => {
-    const xPramas = {
+    const s3UploadPramas = {
         Bucket: params.bucketName,
         Body: params.file as Blob,
         Key: params.path,
@@ -29,7 +29,7 @@ export const s3UploadFile = async (params: { bucketName: string, file: unknown, 
         ContentLength: params.file.size
     }
 
-    return s3.upload(xPramas).promise();
+    return s3.upload(s3UploadPramas).promise();
 }
 
 export const createBucket = async (params: {IsVersioned: boolean, createBucketParams: S3.Types.CreateBucketRequest, versioningParams?: S3.Types.PutBucketVersioningRequest}) => {
@@ -39,4 +39,8 @@ export const createBucket = async (params: {IsVersioned: boolean, createBucketPa
         await s3.putBucketVersioning(versioningParams).promise()
     }
     return response
+}
+
+export const listObjectVersions = async (params) => {
+    return s3.listObjectVersions(params).promise()
 }
