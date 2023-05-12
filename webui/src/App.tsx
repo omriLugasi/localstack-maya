@@ -59,16 +59,16 @@ function App() {
             element: <h1>SNS</h1>
         },
         {
-            path: "/s3",
-            element: <S3Management />
+            path: "/s3/file/:bucketName",
+            element: <S3FilePage />
         },
         {
             path: "/s3/bucket/:bucketName/*",
             element: <S3BucketPage />
         },
         {
-            path: "/s3/file/:bucketName/*",
-            element: <S3FilePage />
+            path: "/s3",
+            element: <S3Management />
         },
         {
             path: "/sqs",

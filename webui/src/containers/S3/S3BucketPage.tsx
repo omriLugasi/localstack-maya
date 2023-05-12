@@ -121,7 +121,7 @@ export const S3BucketPage = (props: IProps) => {
                                         if (row.Folder) {
                                             navigate(`/S3/bucket/${bucketName}/${folderPath}${row.Key}`)
                                         } else {
-                                            navigate(`/S3/file/${bucketName}/${folderPath}${row.Key}`)
+                                            navigate(`/S3/file/${bucketName}?path=${folderPath}${row.Key}`)
                                         }
                                     }}>
                                     {row.Key}

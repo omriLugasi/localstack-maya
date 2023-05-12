@@ -1,19 +1,17 @@
-import {useParams} from "react-router-dom";
+import {useParams, useSearchParams } from "react-router-dom";
 import {useEffect} from "react";
 import {listObjectVersions} from "../../api/S3";
+import Button from "@mui/material/Button";
 
 interface IProps {
 }
 
 export const S3FilePage = (props: IProps) => {
     const { bucketName } = useParams();
+    const [searchParams] = useSearchParams();
 
-    let filePath = window.location.pathname.split('?')[0]
-        .replace(`/S3/file/${bucketName}`, '')
 
-    if (filePath.startsWith('/')) {
-        filePath = filePath.substring(1, filePath.length)
-    }
+    const filePath = searchParams.get('path')
 
     useEffect(() => {
         const query = async () => {
@@ -27,6 +25,10 @@ export const S3FilePage = (props: IProps) => {
     }, [])
 
     return(
-        <h1> Hello here ... {filePath} </h1>
+        <div>
+            <h1> Hello here ... {filePath} </h1>
+            <Button> Download </Button>
+            <Button> Open on new tab </Button>
+        </div>
     )
 }
