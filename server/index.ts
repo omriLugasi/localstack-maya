@@ -1,7 +1,6 @@
 import express from 'express'
 import cors from 'cors'
 import axios from 'axios'
-import sqsRoute from './routes/sqs'
 import fileUpload from 'express-fileupload'
 
 const app = express()
@@ -16,22 +15,14 @@ app.use(fileUpload({
 
 app.use(cors())
 
-app.use('/sqs', sqsRoute)
-
-app.use('/dynamic/*', async (req, res) => {
+app.use(['/dynamic/*', '/dynamic'], async (req, res) => {
     const url = `http://localhost:4566${req.originalUrl.replace('/dynamic', '')}`
     try {
         if (req.method.toLowerCase() === 'get') {
             const response = await axios[req.method.toLowerCase()](url, {
                 params: req.query,
                 headers: {
-                    authorization: req.headers.authorization,
-                    Accept: 'application/json',
-                    'content-type': req.headers['content-type'],
-                    'accept-encoding': 'gzip, deflate, br',
-                    'x-amz-content-sha256': req.headers['x-Amz-Content-Sha256'],
-                    'X-Amz-Date': req.headers['x-Amz-Date'],
-                    'x-amz-user-agent': 'aws-sdk-js/2.1366.0 promise',
+                    ...req.headers,
                 }
             })
             res.send(response.data)
@@ -40,12 +31,7 @@ app.use('/dynamic/*', async (req, res) => {
         if (req.headers['content-type'] === 'application/octet-stream') {
             const response = await axios[req.method.toLowerCase()](url, req.body, {
                     headers: {
-                        authorization: req.headers.authorization,
-                        'content-type': req.headers['content-type'],
-                        'accept-encoding': 'gzip, deflate, br',
-                        'x-amz-content-sha256': req.headers['x-Amz-Content-Sha256'],
-                        'X-Amz-Date': req.headers['x-Amz-Date'],
-                        'x-amz-user-agent': 'aws-sdk-js/2.1366.0 promise',
+                        ...req.headers,
                     }
                 })
             res.send(response.data)
@@ -54,12 +40,7 @@ app.use('/dynamic/*', async (req, res) => {
         const response = await axios[req.method.toLowerCase()](url,
             !!Object.keys(req.body).length ? req.body : undefined, {
             headers: {
-                authorization: req.headers.authorization,
-                'content-type': req.headers['content-type'],
-                'accept-encoding': 'gzip, deflate, br',
-                'x-amz-content-sha256': req.headers['x-Amz-Content-Sha256'],
-                'X-Amz-Date': req.headers['x-Amz-Date'],
-                'x-amz-user-agent': 'aws-sdk-js/2.1366.0 promise',
+                ...req.headers,
             }
         })
         res.send(response.data)

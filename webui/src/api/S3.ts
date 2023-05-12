@@ -1,6 +1,5 @@
 import type { S3 } from 'aws-sdk'
 import type {Bucket} from 'aws-sdk/clients/s3'
-import {ManagedUpload} from "aws-sdk/lib/s3/managed_upload";
 
 
 export const s3 = new window.AWS.S3({

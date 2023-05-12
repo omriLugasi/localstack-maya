@@ -29,9 +29,9 @@ export const SqsManagement = (props: IProps) => {
     const fetchSqs = async () => {
         try {
             const response = await getSqses({ prefix: searchActualValue, region: appContext.region })
-            setTotalItemCount(response.Items.length)
-            response.Items.length = 8
-            setItems(response.Items)
+            setTotalItemCount(response.length)
+            response.length = response.length > 8 ? 8 : response.length
+            setItems(response)
         } catch (e) {
           console.error(e)
         }

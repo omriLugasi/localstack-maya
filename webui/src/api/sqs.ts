@@ -1,67 +1,138 @@
+const endpoint = 'http://localhost:3232/dynamic/'
+const apiVersion = '2012-11-05'
 
-import API from './index'
+export const getSqses = async (params: { region: string, prefix: string }): Promise<{ Attributes: Record<string, string>, QueueName: string, QueueFullName: string }[]> => {
+    const sqsParams = {
+        QueueNamePrefix: params.prefix || ''
+    }
+    const sqs = new window.AWS.SQS({
+        apiVersion,
+        endpoint,
+        region: params.region
+    })
+    const response = await sqs.listQueues(sqsParams).promise();
 
+    const queues: { Attributes: Record<string, string>, QueueName: string }[] = []
+    if (Array.isArray(response?.QueueUrls)) {
+        for (const queueName of response?.QueueUrls) {
+            const sqsParams = {
+                QueueUrl: queueName,
+                AttributeNames: ['All']
+            }
+            const response = await sqs.getQueueAttributes(sqsParams).promise();
+            const nameSplitedArr = queueName.split('/')
+            queues.push({
+                QueueName: nameSplitedArr[nameSplitedArr.length - 1],
+                QueueFullName: queueName,
+                Attributes: response.Attributes
+            })
+        }
+    }
 
-export const getSqses = async (params: { region: string, prefix: string }) => {
-    const response = await API.get('/sqs', { params: {
-            Region: params.region,
-            Prefix: params.prefix
-        } })
-    return response.data
+    return queues
 }
 
 export const createSqs = async (params: { region: string, queueName: string, attributes: Record<string, unknown>, tags: Record<string, unknown> }) => {
-    const response = await API.post('/sqs', {
-        Region: params.region,
-        QueueName: params.queueName,
-        Attributes: params.attributes,
-        Tags: params.tags
+    const { region, queueName, attributes, tags } = params
+    const sqsParams = {
+        Attributes: attributes,
+        tags,
+        QueueName: queueName,
+    }
+    const sqs = new window.AWS.SQS({
+        apiVersion,
+        endpoint,
+        region: params.region
     })
-    return response.data
+    return sqs.createQueue(sqsParams).promise();
 }
 
 export const deleteSqs = async (params: { region: string, queueName: string } ) => {
-    const response = await API.delete('/sqs', {
-        params: {
-            Region: params.region,
-            QueueName: params.queueName,
-        }
+    const sqs = new window.AWS.SQS({
+        apiVersion,
+        endpoint,
+        region: params.region
     })
-    return response.data
+
+    const sqses = await getSqses({region: params.region, prefix: params.queueName})
+
+    const sqsParams = {
+        QueueUrl: sqses[0].QueueFullName
+    }
+    return sqs.deleteQueue(sqsParams).promise();
 }
 
 export const getSqsDetails = async (params: { queueName: string, region: string }) => {
-    const response = await API.get(`/sqs/attributes/${params.queueName}`, {
-        params: { Region: params.region }
+    const sqs = new window.AWS.SQS({
+        apiVersion,
+        endpoint,
+        region: params.region
     })
-    return response.data
+
+    const sqses = await getSqses({region: params.region, prefix: params.queueName})
+    const sqsParams = {
+        QueueUrl: sqses[0].QueueFullName,
+        AttributeNames: ['All']
+    }
+    return sqs.getQueueAttributes(sqsParams).promise();
 }
 
 export const sqsPushMessage = async (params: { region: string, queueName: string, messageBody: unknown }) => {
-    const response = await API.post(`/sqs/messages`, {
-        QueueName: params.queueName,
-        MessageBody: params.messageBody,
-        Region: params.region
+    const sqs = new window.AWS.SQS({
+        apiVersion,
+        endpoint,
+        region: params.region
     })
-    return response.data
+
+    const sqses = await getSqses({region: params.region, prefix: params.queueName})
+
+    const sqsParams = {
+        MessageBody: params.messageBody,
+        QueueUrl: sqses[0].QueueFullName,
+    }
+    return sqs.sendMessage(sqsParams).promise();
 }
 
 export const sqsPullMessage = async (params: { region: string, queueName: string, [key: string]: string | number }) => {
-    const response = await API.get(`/sqs/messages`, {
-        params: {
-            QueueName: params.queueName,
-            Region: params.region,
-            ...params,
-        }
+    // const response = await API.get(`/sqs/messages`, {
+    //     params: {
+    //         QueueName: params.queueName,
+    //         Region: params.region,
+    //         ...params,
+    //     }
+    // })
+    // return response.data
+    const {region, queueName, ...rest} = params
+    const sqs = new window.AWS.SQS({
+        apiVersion,
+        endpoint,
+        region
     })
-    return response.data
+
+    const sqses = await getSqses({ region, prefix: queueName })
+    const sqsParams = {
+        ...rest,
+        QueueUrl: sqses[0].QueueFullName,
+        AttributeNames: ['All'],
+    }
+    return sqs.receiveMessage(sqsParams).promise();
 }
 
 export const sqsAckMessages = async (params: { region: string, queueName: string, messages: { Id: string, ReceiptHandle: string}[] }) => {
-    const response = await API.post(`/sqs/messages/ack`, {
-        Region: params.region,
-        QueueName: params.queueName,
-        Messages: params.messages
+
+    const { region, queueName, messages } = params
+
+    const sqs = new window.AWS.SQS({
+        apiVersion,
+        endpoint,
+        region
     })
-    return response.data
+
+    const sqses = await getSqses({ region, prefix: queueName })
+
+    const sqsParams = {
+        Entries: messages,
+        QueueUrl: sqses[0].QueueFullName,
+    }
+    return sqs.deleteMessageBatch(sqsParams).promise();
 }
