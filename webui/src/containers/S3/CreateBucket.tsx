@@ -69,7 +69,11 @@ export const CreateBucketDialog = (props: IProps) => {
                 />
                 <br />
                 <FormControlLabel control={
-                    <Checkbox value={versioning} onChange={() => setVersioning(!versioning)} />
+                    <Checkbox
+                        inputProps={{
+                            'data-qa': 's3-create-bucket-with-version-checkbox'
+                        }}
+                        value={versioning} onChange={() => setVersioning(!versioning)} />
                 } label="Set as versioned bucket" />
                 <br />
                 <Divider />

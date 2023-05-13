@@ -44,3 +44,9 @@ export const createBucket = async (params: {IsVersioned: boolean, createBucketPa
 export const listObjectVersions = async (params) => {
     return s3.listObjectVersions(params).promise()
 }
+
+export const deleteBuckets = async (params: { bucketName: string }) => {
+    return s3.deleteBucket({
+        Bucket: params.bucketName
+    }).promise()
+}
