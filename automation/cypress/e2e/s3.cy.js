@@ -1,5 +1,8 @@
-
-
+/**
+ * @description
+ * Should help us to work with flow when we need to upload
+ * a file on S3 module.
+ */
 const uploadFileFlow = (cy, filePath, file) => {
   // Click on update file
   cy.get(`button[data-qa="s3-upload-file-button"]`).click()
@@ -8,14 +11,30 @@ const uploadFileFlow = (cy, filePath, file) => {
   cy.get('input[data-qa="upload-s3-file-path-input"]').type(filePath)
 
 
+  // set the file inside the input file
   cy.get('input[type=file]').selectFile({
     contents: file|| Cypress.Buffer.from('file contents'),
     fileName: 'file.txt',
     lastModified: Date.now(),
   })
 
+  // click on submit
   cy.get('button[data-qa="upload-file-to-s3-submit-button"]').click()
 }
+
+/**
+ * @description
+ * Help us navigate to the relevant file
+ */
+const navigateToFile = (cy, filePath) => {
+  const paths = filePath.split('/')
+  for (const path of paths) {
+    cy.get(`span[data-qa="s3-file-column-name-${path.includes('.') ? path : `${path}/`}"]`).click()
+  }
+}
+
+
+
 
 describe('S3 flow spec', () => {
 
@@ -77,13 +96,7 @@ describe('S3 flow spec', () => {
 
       uploadFileFlow(cy, 'A/B/C/r.txt')
 
-      cy.get('span[data-qa="s3-file-column-name-A/"]').click()
-
-      cy.get('span[data-qa="s3-file-column-name-B/"]').click()
-
-      cy.get('span[data-qa="s3-file-column-name-C/"]').click()
-
-      cy.get('span[data-qa="s3-file-column-name-r.txt"]').click()
+      navigateToFile('A/B/C/r.txt')
 
       cy.get('span[data-qa="s3-bucket-column-latest-index-0"]').should('contain', 'true')
 
@@ -106,13 +119,7 @@ describe('S3 flow spec', () => {
 
       uploadFileFlow(cy, 'A/B/C/r.txt')
 
-      cy.get('span[data-qa="s3-file-column-name-A/"]').click()
-
-      cy.get('span[data-qa="s3-file-column-name-B/"]').click()
-
-      cy.get('span[data-qa="s3-file-column-name-C/"]').click()
-
-      cy.get('span[data-qa="s3-file-column-name-r.txt"]').click()
+      navigateToFile('A/B/C/r.txt')
 
       cy.get('span[data-qa="s3-bucket-column-latest-index-0"]').should('contain', 'true')
 
