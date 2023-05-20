@@ -102,6 +102,10 @@ describe('S3 flow spec', () => {
 
       cy.get('span[data-qa="s3-bucket-column-latest-index-0"]').should('contain', 'true')
 
+
+      // click on delete file button
+      cy.get('button[data-qa="s3-delete-file-button"]').click()
+
     })
 
     it('work on versioned bucket', () => {
@@ -126,9 +130,12 @@ describe('S3 flow spec', () => {
       cy.get('span[data-qa="s3-bucket-column-latest-index-0"]').should('contain', 'true')
 
       cy.get('span[data-qa="s3-bucket-column-latest-index-1"]').should('contain', 'false')
+
+      // click on delete file button
+      cy.get('button[data-qa="s3-delete-file-button"]').click()
     })
 
-    it.skip('delete the created buckets', () => {
+    it('delete the created buckets', () => {
       // delete the buckets
       cy.visit('http://127.0.0.1:5173/S3')
 

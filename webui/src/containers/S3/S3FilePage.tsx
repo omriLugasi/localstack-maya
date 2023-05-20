@@ -1,6 +1,6 @@
-import {useParams, useSearchParams } from "react-router-dom";
-import {useEffect, useState} from "react";
-import {listObjectVersions} from "../../api/S3";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
+import {useEffect, useState, useContext} from "react";
+import {deleteObject, listObjectVersions} from "../../api/S3";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -8,8 +8,8 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
-import {Bucket} from "aws-sdk/clients/s3";
 import TableContainer from "@mui/material/TableContainer";
+import { AppContext } from './../../contexts/application'
 
 interface IProps {
 }
@@ -25,6 +25,8 @@ export const S3FilePage = (props: IProps) => {
     StorageClass: string
     VersionId: string
     }[]>([])
+    const appContext = useContext(AppContext) as AppContext
+    const navigate = useNavigate();
 
 
     const filePath = searchParams.get('path')
@@ -41,6 +43,27 @@ export const S3FilePage = (props: IProps) => {
         query()
     }, [])
 
+
+    const onFileDelete = async () => {
+        try {
+            deleteObject({
+                bucketName: bucketName as string,
+                objectPath: filePath as string
+            })
+            appContext.showToaster({
+                type: 'success',
+                message: 'File deleted successfully'
+            })
+            navigate(`/s3/bucket/${bucketName}`)
+        } catch(e) {
+            console.error(e)
+            appContext.showToaster({
+                type: 'error',
+                message: e.message
+            })
+        }
+    }
+
     return(
         <div className='s3-page-padding-left'>
             <h1>S3 File page</h1>
@@ -48,10 +71,11 @@ export const S3FilePage = (props: IProps) => {
                 <span>S3 file <a href="" className='link'>s3://{filePath}</a></span>
                 <div className='sub-title-bar-actions'>
                     <Button
-                        data-qa='s3-upload-file-button'
+                        data-qa='s3-delete-file-button'
                         variant="contained"
                         size='small'
-                    >Download file</Button>
+                        onClick={onFileDelete}
+                    >Delete file</Button>
                 </div>
             </div>
             <TableContainer component={Paper} style={{ width: '92%', margin: '2% 0'}}>

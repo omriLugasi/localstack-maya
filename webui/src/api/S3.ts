@@ -50,3 +50,11 @@ export const deleteBuckets = async (params: { bucketName: string }) => {
         Bucket: params.bucketName
     }).promise()
 }
+
+export const deleteObject = async (params: { bucketName: string, objectPath: string }) => {
+    return s3.deleteObject({
+        Bucket: params.bucketName,
+        Key: params.objectPath
+    }).promise()
+}
+
