@@ -66,6 +66,9 @@ describe('S3 flow spec', () => {
       // Click on submit form on create s3 bucket entity
       cy.get('button[data-qa="s3-create-bucket-submit-button"]').click()
 
+      // check the toaster message for successfully creation
+      cy.get('span[data-qa="toaster-message"]').should('contain', `Bucket ${randomS3RegularBucketName} created successfully`)
+
       // CREATE BUCKET WITH VERSIONS
 
       // Click on open create s3 bucket dialog
@@ -79,6 +82,9 @@ describe('S3 flow spec', () => {
 
       // Click on submit form on create s3 bucket entity
       cy.get('button[data-qa="s3-create-bucket-submit-button"]').click()
+
+      // check the toaster message for successfully creation
+      cy.get('span[data-qa="toaster-message"]').should('contain', `Bucket ${randomS3BucketName} created successfully`)
 
     })
 
@@ -105,6 +111,8 @@ describe('S3 flow spec', () => {
 
       // click on delete file button
       cy.get('button[data-qa="s3-delete-file-button"]').click()
+
+      cy.get('span[data-qa="toaster-message"]').should('contain', 'File deleted successfully')
 
     })
 
@@ -133,6 +141,8 @@ describe('S3 flow spec', () => {
 
       // click on delete file button
       cy.get('button[data-qa="s3-delete-file-button"]').click()
+
+      cy.get('span[data-qa="toaster-message"]').should('contain', 'File deleted successfully')
     })
 
     it('delete the created buckets', () => {

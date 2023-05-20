@@ -52,9 +52,25 @@ export const deleteBuckets = async (params: { bucketName: string }) => {
 }
 
 export const deleteObject = async (params: { bucketName: string, objectPath: string }) => {
-    return s3.deleteObject({
+    const { Versions: versions } = await listObjectVersions({
         Bucket: params.bucketName,
-        Key: params.objectPath
-    }).promise()
+        Prefix: params.objectPath
+    })
+    // delete file versioned by run on all the version and delete them.
+    if (Array.isArray(versions) && !!versions.length) {
+        for(const { VersionId: version } of versions) {
+            await s3.deleteObject({
+                Bucket: params.bucketName,
+                Key: params.objectPath,
+                VersionId: version
+            }).promise()
+        }
+    } else {
+        await s3.deleteObject({
+            Bucket: params.bucketName,
+            Key: params.objectPath,
+        }).promise()
+    }
+    return true
 }
 

@@ -26,7 +26,7 @@ const ToasterWrapper = () => {
                             autoHideDuration={4000}
                             onClose={() => context.removeToaster(item.id)}>
                             <Alert severity={item.type} sx={{ width: '100%' }}>
-                                {item.message}
+                                <span data-qa='toaster-message'>{item.message}</span>
                             </Alert>
                         </Snackbar>
                     ))
