@@ -28,8 +28,10 @@ const uploadFileFlow = (cy, filePath, file) => {
  */
 const navigateToFile = (cy, filePath) => {
   const paths = filePath.split('/')
+  let index = 0
   for (const path of paths) {
-    cy.get(`span[data-qa="s3-file-column-name-${path.includes('.') ? path : `${path}/`}"]`).click()
+    index++
+    cy.get(`span[data-qa="s3-file-column-name-${index === paths.length ? path : `${path}/`}"]`).click()
   }
 }
 
@@ -96,7 +98,7 @@ describe('S3 flow spec', () => {
 
       uploadFileFlow(cy, 'A/B/C/r.txt')
 
-      navigateToFile('A/B/C/r.txt')
+      navigateToFile(cy, 'A/B/C/r.txt')
 
       cy.get('span[data-qa="s3-bucket-column-latest-index-0"]').should('contain', 'true')
 
@@ -119,7 +121,7 @@ describe('S3 flow spec', () => {
 
       uploadFileFlow(cy, 'A/B/C/r.txt')
 
-      navigateToFile('A/B/C/r.txt')
+      navigateToFile(cy, 'A/B/C/r.txt')
 
       cy.get('span[data-qa="s3-bucket-column-latest-index-0"]').should('contain', 'true')
 
