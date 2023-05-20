@@ -1,4 +1,4 @@
-import {useContext, useState} from "react";
+import {useContext, useRef, useState} from "react";
 import Dialog from '@mui/material/Dialog'
 import TextField from "@mui/material/TextField";
 import { MuiFileInput } from 'mui-file-input'
@@ -16,14 +16,18 @@ interface IProps {
 
 export const UploadFile = (props: IProps) => {
     const [filePath, setFilePath] = useState<string>('')
-    const [file, setFile] = useState(null)
+    const inputRefFile = useRef()
     const appContext = useContext(AppContext)
 
     const onSubmit = async () => {
+        if (!inputRefFile.current.files?.[0]) {
+            alert('You must choose a file.')
+            return
+        }
         try {
             await s3UploadFile({
                 bucketName: props.bucketName,
-                file: file,
+                file: inputRefFile.current.files[0],
                 path: `${props.prePath ? `${props.prePath}/` : ''}${filePath}`
             })
             props.onClose()
@@ -55,12 +59,13 @@ export const UploadFile = (props: IProps) => {
                     onChange={e => setFilePath(e.target.value)}
                 />
                 <br />
-                <MuiFileInput
-                    data-qa='upload-file-to-s3-file-upload'
-                    placeholder="Insert a file"
-                    value={file}
-                    onChange={setFile}
-                />
+                <input type='file' ref={inputRefFile} />
+                {/*<MuiFileInput*/}
+                {/*    data-qa='upload-file-to-s3-file-upload'*/}
+                {/*    placeholder="Insert a file"*/}
+                {/*    value={file}*/}
+                {/*    onChange={setFile}*/}
+                {/*/>*/}
                 <br />
                 <br />
                 <Divider />
@@ -70,7 +75,7 @@ export const UploadFile = (props: IProps) => {
                         data-qa='upload-file-to-s3-submit-button'
                         variant="contained"
                         size={'small'}
-                        disabled={!filePath || !file}
+                        disabled={!filePath}
                         onClick={onSubmit}
                     >Create</Button>
                 </div>

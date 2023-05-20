@@ -72,14 +72,18 @@ export const S3FilePage = (props: IProps) => {
                             >
                                 <TableCell component="th" scope="row">
                                 <span
-                                    data-qa={`s3-bucket-column-name-${versionObject.VersionId}`}
+                                    data-qa={`s3-bucket-column-index-${index}`}
                                     className='link'
                                 >
                                     {versionObject.VersionId === 'null' ? 'Not versioned' : versionObject.VersionId }
                                 </span>
                                 </TableCell>
                                 <TableCell>
-                                    { versionObject.IsLatest ? 'true' : 'false' }
+                                    <span
+                                        data-qa={`s3-bucket-column-latest-index-${index}`}
+                                    >
+                                        { versionObject.IsLatest ? 'true' : 'false' }
+                                    </span>
                                 </TableCell>
                                 <TableCell>
                                     {versionObject.LastModified.toISOString()}

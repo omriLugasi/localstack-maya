@@ -1,3 +1,22 @@
+
+
+const uploadFileFlow = (cy, filePath, file) => {
+  // Click on update file
+  cy.get(`button[data-qa="s3-upload-file-button"]`).click()
+
+  // type file name on the file input path
+  cy.get('input[data-qa="upload-s3-file-path-input"]').type(filePath)
+
+
+  cy.get('input[type=file]').selectFile({
+    contents: file|| Cypress.Buffer.from('file contents'),
+    fileName: 'file.txt',
+    lastModified: Date.now(),
+  })
+
+  cy.get('button[data-qa="upload-file-to-s3-submit-button"]').click()
+}
+
 describe('S3 flow spec', () => {
 
   context('happy flow', () => {
@@ -56,23 +75,51 @@ describe('S3 flow spec', () => {
       // check the url
       cy.url().should('include', `/S3/bucket/${randomS3RegularBucketName}`)
 
-      // Click on update file
-      cy.get(`button[data-qa="s3-upload-file-button"]`).click()
+      uploadFileFlow(cy, 'A/B/C/r.txt')
 
-      // type file name on the file input path
-      cy.get('input[data-qa="upload-s3-file-path-input"]').type('A/B/C/r.txt')
+      cy.get('span[data-qa="s3-file-column-name-A/"]').click()
 
+      cy.get('span[data-qa="s3-file-column-name-B/"]').click()
 
-      // need to find a solution with the file input
-      cy.get('span[aria-placeholder="Insert a file"]').click()
+      cy.get('span[data-qa="s3-file-column-name-C/"]').click()
 
-      cy.wait(5000)
+      cy.get('span[data-qa="s3-file-column-name-r.txt"]').click()
+
+      cy.get('span[data-qa="s3-bucket-column-latest-index-0"]').should('contain', 'true')
 
     })
 
-    it('work on versioned bucket', () => {})
+    it('work on versioned bucket', () => {
+      cy.visit('http://127.0.0.1:5173/S3')
 
-    it('delete the created buckets', () => {
+      // find the regular bucket
+      cy.get('input[data-qa="search-s3-by-name"]').clear()
+      cy.get('input[data-qa="search-s3-by-name"]').type(randomS3BucketName)
+
+      // Click on the bucket to navigate to the bucket page
+      cy.get(`span[data-qa="s3-bucket-column-name-${randomS3BucketName}"]`).click()
+
+      // check the url
+      cy.url().should('include', `/S3/bucket/${randomS3BucketName}`)
+
+      uploadFileFlow(cy, 'A/B/C/r.txt')
+
+      uploadFileFlow(cy, 'A/B/C/r.txt')
+
+      cy.get('span[data-qa="s3-file-column-name-A/"]').click()
+
+      cy.get('span[data-qa="s3-file-column-name-B/"]').click()
+
+      cy.get('span[data-qa="s3-file-column-name-C/"]').click()
+
+      cy.get('span[data-qa="s3-file-column-name-r.txt"]').click()
+
+      cy.get('span[data-qa="s3-bucket-column-latest-index-0"]').should('contain', 'true')
+
+      cy.get('span[data-qa="s3-bucket-column-latest-index-1"]').should('contain', 'false')
+    })
+
+    it.skip('delete the created buckets', () => {
       // delete the buckets
       cy.visit('http://127.0.0.1:5173/S3')
 
