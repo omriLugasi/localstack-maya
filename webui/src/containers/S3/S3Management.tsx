@@ -159,7 +159,10 @@ export const S3Management = (props: IProps) => {
                 buckets.length > 7 ? <p> Display 8 from { buckets.length } results. </p> : null
             }
             {
-                createBucketDialog && <CreateBucketDialog onClose={() => setCreateBucketDialog(false)} />
+                createBucketDialog && <CreateBucketDialog onClose={() => {
+                    setCreateBucketDialog(false)
+                    searchForBuckets()
+                }} />
             }
         </div>
     )
