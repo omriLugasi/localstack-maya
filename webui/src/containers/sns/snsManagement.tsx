@@ -2,7 +2,7 @@ import {useContext, useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {TextField} from "@mui/material";
 import FormControl from "@mui/material/FormControl";
-import { getTopics } from './../../api/sns'
+import { getTopics, SNSType } from './../../api/sns'
 import Button from "@mui/material/Button";
 import {CreateNewSns} from "./createNewSns";
 import {AppContext} from "../../contexts/application";
@@ -20,7 +20,7 @@ interface IProps {
 
 export const SnsManagement = (props: IProps) => {
     const [showCreateNewSns, setShowCreateNewSns] = useState<boolean>(false)
-    const [items, setItems] = useState<{ name?: string, arn?: string }[]>([])
+    const [items, setItems] = useState<SNSType[]>([])
     const [totalItemCount, setTotalItemCount] = useState<number>(0)
     const [searchDebounceValue, searchActualValue, setSearchValue] = useDebounce(250)
     const navigate = useNavigate()
@@ -77,6 +77,12 @@ export const SnsManagement = (props: IProps) => {
                     <TableRow>
                         <TableCell>Topic Name</TableCell>
                         <TableCell>Topic Arn</TableCell>
+                        <TableCell>Owner</TableCell>
+                        <TableCell>Subscriptions Confirmed</TableCell>
+                        <TableCell>Subscriptions Deleted</TableCell>
+                        <TableCell>Subscriptions Pending</TableCell>
+                        <TableCell>Policy</TableCell>
+                        <TableCell>Delivery Policy</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -89,13 +95,32 @@ export const SnsManagement = (props: IProps) => {
                                 <span
                                     data-qa={`sns-queue-column-name-${row.name}`}
                                     style={{ cursor: 'pointer', color: 'blue' }}
-                                    onClick={() => navigate(`/SNS/queue/${row.name}`)}>
+                                    onClick={() => navigate(`/SNS/topic/${row.name}`)}>
                                     {row.name}
                                 </span>
                             </TableCell>
                             <TableCell>
                                 {row.arn}
                             </TableCell>
+                            <TableCell>
+                                {row.owner}
+                            </TableCell>
+                            <TableCell>
+                                {row.subscriptionsConfirmed}
+                            </TableCell>
+                            <TableCell>
+                                {row.subscriptionsDeleted}
+                            </TableCell>
+                            <TableCell>
+                                {row.subscriptionsPending}
+                            </TableCell>
+                            <TableCell>
+                                {row.policy}
+                            </TableCell>
+                            <TableCell>
+                                {row.deliveryPolicy}
+                            </TableCell>
+
                         </TableRow>
                     ))}
                 </TableBody>

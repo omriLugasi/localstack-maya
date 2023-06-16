@@ -3,7 +3,19 @@ import {CreateTopicInput} from "aws-sdk/clients/sns";
 const endpoint = 'http://localhost:3232/dynamic/'
 const apiVersion = '2012-11-05'
 
-export const getTopics = async (params: { region: string, prefix: string }): Promise<{ arn?: string, name?: string }[]> => {
+export type SNSType = {
+    arn?: string,
+    name?: string,
+    owner?: string,
+    subscriptionsConfirmed?: string,
+    subscriptionsDeleted?: string,
+    subscriptionsPending?: string,
+    policy?: string,
+    deliveryPolicy?: string,
+}
+
+
+export const getTopics = async (params: { region: string, prefix: string }): Promise<SNSType[]> => {
     const sqsParams = {
         QueueNamePrefix: params.prefix || ''
     }
@@ -14,13 +26,21 @@ export const getTopics = async (params: { region: string, prefix: string }): Pro
     })
     const response = await sns.listTopics().promise();
 
-    const topics: { arn?: string, name?: string }[] = []
+    const topics: SNSType[] = []
     if (Array.isArray(response?.Topics)) {
         for (const topic of response?.Topics) {
+            const details = await sns.getTopicAttributes(topic).promise()
+            console.log(details)
             const arr = topic?.TopicArn?.split(':')
             topics.push({
                 arn: topic?.TopicArn,
-                name: arr && arr[arr.length - 1]
+                name: details.Attributes?.DisplayName ? details.Attributes?.DisplayName : (arr && arr[arr.length - 1]),
+                owner: details.Attributes?.Owner,
+                subscriptionsConfirmed: details.Attributes?.SubscriptionsConfirmed,
+                subscriptionsDeleted: details.Attributes?.SubscriptionsDeleted,
+                subscriptionsPending: details.Attributes?.SubscriptionsPending,
+                policy: details.Attributes?.Policy,
+                deliveryPolicy: details.Attributes?.DeliveryPolicy,
             })
         }
     }

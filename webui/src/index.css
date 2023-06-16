@@ -90,7 +90,7 @@ body {
 
 .sub-title-bar-actions {}
 
-/* sqs queue page */
+/* sqs and sns queue page */
 
 .pull-details-container {
   padding-left: 20px;
@@ -107,27 +107,27 @@ body {
   width: 25%;
 }
 
-.sqs-page-paper-container {
+.sqs-page-paper-container, .sns-page-paper-container {
   width: 90%;
   margin-top: 3%;
 }
 
-.sqs-page-padding-left {
+.sqs-page-padding-left, .sns-page-padding-left {
   padding-left: 20px;
 }
 
-.sqs-page-padding-right {
+.sqs-page-padding-right, .sns-page-padding-right {
   padding-right: 20px;
 }
 /* sqs queue page end */
 
 
 
-.sqs-page-padding-left {
+.sqs-page-padding-left, .sns-page-padding-left {
   padding-left: 20px;
 }
 
-.sqs-page-padding-right {
+.sqs-page-padding-right, .sns-page-padding-right {
   padding-right: 20px;
 }
 

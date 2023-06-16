@@ -24,7 +24,7 @@ type SqsMessageType = {
 interface IProps {
 }
 
-export const SqsQueuePage = (props: IProps) => {
+export const SnsTopicPage = (props: IProps) => {
     const [openedMessage, setOpenMessage] = useState<null | SqsMessageType>(null)
     const [pushMessageContent, setPushMessageContent] = useState<string>('')
     const [receivedMessages, setReceivedMessages] = useState<SqsMessageType[]>([])
@@ -42,7 +42,7 @@ export const SqsQueuePage = (props: IProps) => {
     })
 
     const navigate = useNavigate();
-    const { queueName } = useParams();
+    const { topicName } = useParams();
     const appContext = useContext(AppContext)
 
     useEffect(() => {
@@ -84,7 +84,7 @@ export const SqsQueuePage = (props: IProps) => {
     const onPullHandler = async () => {
         const response = await sqsPullMessage({
             region: appContext.region,
-            queueName: queueName as string,
+            queueName: topicName as string,
             MaxNumberOfMessages: 10
         })
         setReceivedMessages(response.Messages || [])
@@ -113,7 +113,7 @@ export const SqsQueuePage = (props: IProps) => {
         try {
             await sqsAckMessages({
                 region: appContext.region,
-                queueName: queueName as string,
+                queueName: topicName as string,
                 messages: selectedMessages.map(message => ({
                     Id: message.MessageId,
                     ReceiptHandle: message.ReceiptHandle
@@ -139,12 +139,12 @@ export const SqsQueuePage = (props: IProps) => {
         try {
             await deleteSqs({
                 region: appContext.region,
-                queueName: queueName as string
+                queueName: topicName as string
             })
-            navigate('/SQS')
+            navigate('/SNS')
             appContext.showToaster({
                 type: 'success',
-                message: `${queueName} deleted successfully`
+                message: `${topicName} deleted successfully`
             })
 
         } catch(e) {
@@ -165,14 +165,14 @@ export const SqsQueuePage = (props: IProps) => {
 
     return (
         <div>
-            <div className='sqs-page-padding-left'>
+            <div className='sns-page-padding-left'>
                 <h2> Send and receive messages</h2>
                 <div className='sub-title-bar'>
-                    <span>Send messages to and receive message from a queue ({queueName}).</span>
+                    <span>Send messages to and receive message from a SNS Topic ({topicName}).</span>
                     <div className='sub-title-bar-actions'>
                         <Button
                             onClick={onDeleteQueue}
-                            data-qa='sqs-delete-queue'
+                            data-qa='sns-delete-queue'
                             variant="contained"
                             size='small'
                         >Delete Queue</Button>
@@ -181,11 +181,11 @@ export const SqsQueuePage = (props: IProps) => {
 
 
 
-                <Paper className='sqs-page-paper-container'>
-                    <div className='flex-space-between sqs-page-padding-right sqs-page-padding-left'>
+                <Paper className='sns-page-paper-container'>
+                    <div className='flex-space-between sns-page-padding-right sns-page-padding-left'>
                         <h3>Send message</h3>
                         <Button
-                            data-qa='sqs-push-message-button'
+                            data-qa='sns-push-message-button'
                             variant="contained"
                             onClick={onPushHandler}
                             size='small'
@@ -193,13 +193,13 @@ export const SqsQueuePage = (props: IProps) => {
                         >Push</Button>
                     </div>
                     <Divider />
-                    <p className='sqs-page-padding-left'>
+                    <p className='sns-page-padding-left'>
                         Message body <br/>
                         <span>Enter the message to send to the queue.</span>
                     </p>
                     <TextField
                         inputProps={{
-                            'data-qa': 'sqs-push-message-input'
+                            'data-qa': 'sns-push-message-input'
                         }}
                         style={{ width: '80%', margin: 20 }}
                         label="Message"
@@ -210,12 +210,12 @@ export const SqsQueuePage = (props: IProps) => {
                     />
                 </Paper>
 
-                <Paper className='sqs-page-paper-container'>
-                    <div className='flex-space-between sqs-page-padding-right sqs-page-padding-left'>
+                <Paper className='sns-page-paper-container'>
+                    <div className='flex-space-between sns-page-padding-right sns-page-padding-left'>
                         <h3>Pull messages</h3>
                        <div>
                            <Button
-                               data-qa='sqs-pull-message-button'
+                               data-qa='sns-pull-message-button'
                                variant="contained"
                                onClick={onPullHandler}
                                size='small'
@@ -224,7 +224,7 @@ export const SqsQueuePage = (props: IProps) => {
                                selectedMessages.length
                                    ? (
                                        <Button
-                                           data-qa='sqs-ack-message-button'
+                                           data-qa='sns-ack-message-button'
                                            onClick={ackHandler}
                                            variant="contained"
                                            size='small'
@@ -236,7 +236,7 @@ export const SqsQueuePage = (props: IProps) => {
                     </div>
                     <Divider />
 
-                    <div className='pull-details-container sqs-page-padding-left'>
+                    <div className='pull-details-container sns-page-padding-left'>
                         <div className='pull-details-sub-container'>
                             <div>
                                 <p>Messages Available</p>
@@ -321,14 +321,14 @@ export const SqsQueuePage = (props: IProps) => {
                 {
                    !!openedMessage && (
                         <div style={{ width: 400, paddingLeft: 20 }}>
-                            <h2>Sqs message</h2>
+                            <h2>Sns message</h2>
                             <span>
                                 The following describe the message information
                             </span>
                             <h3>Message id</h3>
                             { openedMessage?.MessageId }
                             <h3>Message body</h3>
-                            <span data-qa={`sqs-drawer-message-body`}>{ openedMessage.Body }</span>
+                            <span data-qa={`sns-drawer-message-body`}>{ openedMessage.Body }</span>
                             <h3>Message time</h3>
                             { new Date(parseInt(openedMessage?.Attributes.SentTimestamp)).toISOString() }
                         </div>

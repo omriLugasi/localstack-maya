@@ -12,6 +12,7 @@ import {AppContext, ContextType} from "./contexts/application";
 import './App.css'
 import {S3FilePage} from "./containers/S3/S3FilePage";
 import {SqsManagement} from "./containers/sqs/sqsManagement";
+import {SnsTopicPage} from "./containers/sns/snsTopicPage";
 
 
 const ToasterWrapper = () => {
@@ -58,6 +59,10 @@ function App() {
         {
             path: "/sns",
             element: <SnsManagement />
+        },
+        {
+            path: "/sns/topic/:topicName",
+            element: <SnsTopicPage />
         },
         {
             path: "/s3/file/:bucketName",
