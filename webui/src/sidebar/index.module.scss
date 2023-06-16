@@ -1,0 +1,25 @@
+.sidebar {
+    height: 100%;
+    width: 60px;
+    border-right: lightgray solid 1px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+
+    > img {
+        cursor: pointer;
+    }
+
+    > :nth-child(1) {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    > span {
+        font-size: 12px;
+        font-weight: bolder;
+        cursor: pointer;
+        border: solid 2px;
+        padding: 2px;
+    }
+}

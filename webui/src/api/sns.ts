@@ -16,9 +16,6 @@ export type SNSType = {
 
 
 export const getTopics = async (params: { region: string, prefix: string }): Promise<SNSType[]> => {
-    const sqsParams = {
-        QueueNamePrefix: params.prefix || ''
-    }
     const sns = new window.AWS.SNS({
         apiVersion,
         endpoint,
@@ -27,14 +24,15 @@ export const getTopics = async (params: { region: string, prefix: string }): Pro
     const response = await sns.listTopics().promise();
 
     const topics: SNSType[] = []
-    if (Array.isArray(response?.Topics)) {
-        for (const topic of response?.Topics) {
-            const details = await sns.getTopicAttributes(topic).promise()
-            console.log(details)
-            const arr = topic?.TopicArn?.split(':')
+    for (const topic of (response?.Topics || [])) {
+        const details = await sns.getTopicAttributes(topic).promise()
+        console.log(details)
+        const arr = topic?.TopicArn?.split(':')
+        const topicName = details.Attributes?.DisplayName ? details.Attributes?.DisplayName : (arr && arr[arr.length - 1])
+        if (topicName?.includes(params.prefix)) {
             topics.push({
                 arn: topic?.TopicArn,
-                name: details.Attributes?.DisplayName ? details.Attributes?.DisplayName : (arr && arr[arr.length - 1]),
+                name: topicName,
                 owner: details.Attributes?.Owner,
                 subscriptionsConfirmed: details.Attributes?.SubscriptionsConfirmed,
                 subscriptionsDeleted: details.Attributes?.SubscriptionsDeleted,

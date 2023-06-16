@@ -1,7 +1,7 @@
-import {useContext, useState} from 'react'
+import React, {useContext, useState} from 'react'
 import Snackbar from "@mui/material/Snackbar";
 import { Alert } from "@mui/material";
-import {Navbar} from "./navbar";
+// import {Navbar} from "./navbar";
 import {SnsManagement} from "./containers/sns/snsManagement";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {SqsQueuePage} from "./containers/sqs/sqsQueuePage";
@@ -13,6 +13,7 @@ import './App.css'
 import {S3FilePage} from "./containers/S3/S3FilePage";
 import {SqsManagement} from "./containers/sqs/sqsManagement";
 import {SnsTopicPage} from "./containers/sns/snsTopicPage";
+import {Sidebar} from "./sidebar";
 
 
 const ToasterWrapper = () => {
@@ -97,17 +98,20 @@ function App() {
         showToaster,
         removeToaster
     }}>
-        <Navbar
-            regions={['us-east-1', 'us-east-2', 'us-west-1', 'us-west-2', 'eu-central-1' ]}
-            onRegionChange={(selectedValue => {
-                setState({
-                    ...state,
-                    region: selectedValue as string
-                })
-            })}
-            navigateHome={() => router.navigate('/')}
-        />
-        <RouterProvider router={router} />
+        {/*<Navbar*/}
+        {/*    regions={['us-east-1', 'us-east-2', 'us-west-1', 'us-west-2', 'eu-central-1' ]}*/}
+        {/*    onRegionChange={(selectedValue => {*/}
+        {/*        setState({*/}
+        {/*            ...state,*/}
+        {/*            region: selectedValue as string*/}
+        {/*        })*/}
+        {/*    })}*/}
+        {/*    navigateHome={() => router.navigate('/')}*/}
+        {/*/>*/}
+        <div className='main-frame'>
+            <Sidebar navigate={router.navigate} />
+            <RouterProvider router={router} />
+        </div>
         <ToasterWrapper />
     </AppContext.Provider>
   )

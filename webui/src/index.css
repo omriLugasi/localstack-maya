@@ -14,8 +14,23 @@ body {
   background-color: #f4f3f0;
 }
 
+html, body, #root {
+  height: 100%;
+}
+
 * {
   font-family: 'Quicksand', sans-serif !important;
+}
+
+.main-frame {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+}
+
+.main-frame > div:nth-child(2) {
+  width: calc(100% - 60px)
 }
 
 .navbar {
