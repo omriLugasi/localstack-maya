@@ -2,8 +2,8 @@ import {useContext, useState} from 'react'
 import Snackbar from "@mui/material/Snackbar";
 import { Alert } from "@mui/material";
 import {Navbar} from "./navbar";
-import {SqsManagement} from "./containers/sqs/sqsManagement";
-import {createBrowserRouter, RouterProvider, useParams} from "react-router-dom";
+import {SnsManagement} from "./containers/sns/snsManagement";
+import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {SqsQueuePage} from "./containers/sqs/sqsQueuePage";
 import {S3Management} from "./containers/S3/S3Management";
 import {S3BucketPage} from "./containers/S3/S3BucketPage";
@@ -11,6 +11,7 @@ import {Home} from "./containers/home";
 import {AppContext, ContextType} from "./contexts/application";
 import './App.css'
 import {S3FilePage} from "./containers/S3/S3FilePage";
+import {SqsManagement} from "./containers/sqs/sqsManagement";
 
 
 const ToasterWrapper = () => {
@@ -56,7 +57,7 @@ function App() {
     const router = createBrowserRouter([
         {
             path: "/sns",
-            element: <h1>SNS</h1>
+            element: <SnsManagement />
         },
         {
             path: "/s3/file/:bucketName",
